@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lara Askovic</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Jost:wght@100;200;300;400&display=swap');
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --h: #0a0a0f;
+  --w: #f0eee8;
+  --gold: #c9a96e;
+  --rose: #e8a0b0;
+  --ice: #a0c4e8;
+  --violet: #9b72cf;
+  --emerald: #5ecc9a;
+}
+
+html{font-size:16px}
+body{
+  background:var(--h);
+  color:var(--w);
+  font-family:'Jost',sans-serif;
+  font-weight:200;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* ── CURSOR ── */
+#cur,#cur2{position:fixed;pointer-events:none;z-index:9999;border-radius:50%;transform:translate(-50%,-50%)}
+#cur{width:6px;height:6px;background:#fff;transition:transform .1s,background .3s}
+#cur2{width:42px;height:42px;border:1px solid rgba(255,255,255,.3);transition:width .4s cubic-bezier(.23,1,.32,1),height .4s cubic-bezier(.23,1,.32,1),border-color .3s,transform .06s}
+body.hovering #cur{transform:translate(-50%,-50%) scale(3);background:var(--gold)}
+body.hovering #cur2{width:0;height:0}
+
+/* ── CANVAS ── */
+#c{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  padding:2.2rem 3.5rem;
+  display:flex;justify-content:space-between;align-items:center;
+  mix-blend-mode:difference;
+}
+.logo{
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;letter-spacing:.05em;
+  color:#fff;text-decoration:none;font-style:italic;
+}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{
+  font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(255,255,255,.6);text-decoration:none;
+  transition:color .3s;
+}
+.nav-links a:hover{color:#fff}
+
+/* ── SCROLL CONTAINER ── */
+#scroll-root{position:relative;z-index:10}
+
+/* ── SECTIONS ── */
+section{
+  position:relative;
+  min-height:100vh;
+  display:flex;align-items:center;
+  padding:0 3.5rem;
+}
+
+/* ── HERO ── */
+#s0{overflow:hidden}
+.hero-inner{max-width:900px;position:relative}
+
+.pre-label{
+  font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);margin-bottom:2rem;
+  display:flex;align-items:center;gap:1rem;
+  opacity:0;animation:up 1s .2s cubic-bezier(.23,1,.32,1) forwards;
+}
+.pre-label span{display:block;width:28px;height:1px;background:rgba(255,255,255,.2)}
+
+h1{
+  font-family:'Playfair Display',serif;
+  font-weight:400;
+  font-size:clamp(4rem,9vw,9rem);
+  line-height:.93;
+  letter-spacing:-.02em;
+  color:#fff;
+  opacity:0;
+  animation:up 1.2s .35s cubic-bezier(.23,1,.32,1) forwards;
+}
+h1 .line{display:block;overflow:hidden}
+h1 .italic{font-style:italic;color:var(--gold)}
+h1 .outline{
+  -webkit-text-stroke:1px rgba(255,255,255,.35);
+  color:transparent;
+}
+
+.hero-sub{
+  font-size:1rem;line-height:1.9;color:rgba(255,255,255,.4);
+  max-width:380px;margin-top:2.5rem;
+  opacity:0;animation:up 1s .6s cubic-bezier(.23,1,.32,1) forwards;
+}
+
+.hero-cta{
+  margin-top:3rem;display:flex;gap:2rem;align-items:center;
+  opacity:0;animation:up 1s .8s cubic-bezier(.23,1,.32,1) forwards;
+}
+.btn{
+  display:inline-block;padding:.8rem 2.4rem;
+  font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;
+  text-decoration:none;border-radius:40px;
+  transition:all .4s cubic-bezier(.23,1,.32,1);
+}
+.btn-fill{background:var(--w);color:var(--h)}
+.btn-fill:hover{background:var(--gold);color:#fff}
+.btn-line{border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6)}
+.btn-line:hover{border-color:rgba(255,255,255,.6);color:#fff}
+
+/* scroll indicator */
+.scroll-indicator{
+  position:absolute;bottom:3rem;right:3.5rem;
+  writing-mode:vertical-rl;
+  font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(255,255,255,.2);
+  display:flex;align-items:center;gap:.7rem;
+}
+.scroll-indicator::before{
+  content:'';display:block;width:1px;height:50px;
+  background:linear-gradient(to bottom,transparent,rgba(255,255,255,.3));
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ── WORK ── */
+#s1{padding:10rem 3.5rem;display:block;min-height:auto}
+#s2{padding:10rem 3.5rem;display:block;min-height:auto}
+#s3{padding:10rem 3.5rem;display:block;min-height:auto}
+#s4{min-height:80vh;justify-content:center;flex-direction:column;text-align:center;padding:6rem 3.5rem}
+
+.section-label{
+  font-size:.6rem;letter-spacing:.35em;text-transform:uppercase;
+  color:rgba(255,255,255,.25);margin-bottom:1.2rem;
+  display:flex;align-items:center;gap:1rem;
+}
+.section-label::before{content:'';display:block;width:20px;height:1px;background:rgba(255,255,255,.15)}
+
+h2{
+  font-family:'Playfair Display',serif;
+  font-weight:400;font-size:clamp(2.5rem,5vw,4.5rem);
+  line-height:1.1;color:#fff;margin-bottom:3rem;
+}
+h2 em{font-style:italic;color:var(--gold)}
+
+/* Project cards */
+.projects{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1.5rem;
+}
+.project{
+  position:relative;overflow:hidden;border-radius:6px;
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.06);
+  cursor:pointer;
+  transition:transform .6s cubic-bezier(.23,1,.32,1),border-color .4s;
+}
+.project:hover{transform:translateY(-6px);border-color:rgba(255,255,255,.15)}
+.project.wide{grid-column:span 2}
+
+.project-face{
+  height:320px;position:relative;overflow:hidden;
+}
+.project-face .bg{
+  position:absolute;inset:0;
+  transition:transform .8s cubic-bezier(.23,1,.32,1);
+}
+.project:hover .bg{transform:scale(1.04)}
+
+.p-bg1{background:radial-gradient(ellipse at 30% 30%,#2d0b4e 0%,#0a0a1a 60%)}
+.p-bg2{background:radial-gradient(ellipse at 70% 70%,#0b2d1a 0%,#0a0a0f 60%)}
+.p-bg3{background:radial-gradient(ellipse at 50% 20%,#2d1b0b 0%,#0a0a0f 60%)}
+.p-bg4{background:radial-gradient(ellipse at 20% 80%,#0b1a2d 0%,#0a0a0f 60%)}
+
+.p-glow{
+  position:absolute;border-radius:50%;filter:blur(50px);opacity:.5;
+  pointer-events:none;transition:opacity .6s;
+}
+.project:hover .p-glow{opacity:.9}
+
+.project-meta{
+  padding:1.5rem 1.75rem;
+  border-top:1px solid rgba(255,255,255,.05);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.project-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.2rem;font-weight:400;color:#fff;
+}
+.project-type{
+  font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);
+}
+
+/* About */
+.about-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center;
+}
+.about-text p{
+  font-size:1.05rem;line-height:2;color:rgba(255,255,255,.45);
+  margin-bottom:1.5rem;
+}
+.stat-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:3rem;
+}
+.stat{text-align:center}
+.stat-num{
+  font-family:'Playfair Display',serif;
+  font-size:2.8rem;font-weight:400;color:var(--gold);
+  display:block;
+}
+.stat-label{
+  font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);margin-top:.4rem;display:block;
+}
+
+/* Services */
+.services-list{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.service{
+  padding:2.5rem;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:6px;
+  background:rgba(255,255,255,.02);
+  transition:all .5s cubic-bezier(.23,1,.32,1);
+}
+.service:hover{
+  border-color:rgba(255,255,255,.15);
+  background:rgba(255,255,255,.04);
+  transform:translateY(-4px);
+}
+.service-icon{
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:1.5rem;font-size:1.1rem;
+}
+.service h3{
+  font-family:'Playfair Display',serif;
+  font-size:1.2rem;font-weight:400;color:#fff;margin-bottom:.8rem;
+}
+.service p{font-size:.9rem;line-height:1.8;color:rgba(255,255,255,.35)}
+
+/* Contact */
+#s4 h2{font-size:clamp(3rem,7vw,6rem);margin-bottom:1rem}
+.contact-sub{color:rgba(255,255,255,.3);margin-bottom:3rem}
+.email-link{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:clamp(1.5rem,3.5vw,3rem);color:var(--gold);
+  text-decoration:none;
+  border-bottom:1px solid rgba(201,169,110,.3);padding-bottom:4px;
+  transition:border-color .3s;
+}
+.email-link:hover{border-color:var(--gold)}
+
+/* Footer */
+footer{
+  position:relative;z-index:10;
+  padding:2rem 3.5rem;
+  border-top:1px solid rgba(255,255,255,.04);
+  display:flex;justify-content:space-between;align-items:center;
+}
+footer p{font-size:.65rem;letter-spacing:.1em;color:rgba(255,255,255,.15)}
+.socials{display:flex;gap:2rem}
+.socials a{
+  font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.2);text-decoration:none;
+  transition:color .3s;
+}
+.socials a:hover{color:#fff}
+
+/* ── REVEAL ── */
+.r{opacity:0;transform:translateY(32px);transition:opacity .9s cubic-bezier(.23,1,.32,1),transform .9s cubic-bezier(.23,1,.32,1)}
+.r.v{opacity:1;transform:none}
+
+@keyframes up{to{opacity:1;transform:none}}
+
+/* grain overlay */
+body::after{
+  content:'';position:fixed;inset:0;z-index:500;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:.5;
+}
+
+/* colour pulse on hover card */
+@keyframes hueShift{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur2"></div>
+
+<canvas id="c"></canvas>
+
+<nav>
+  <a class="logo" href="#">Lara Askovic</a>
+  <ul class="nav-links">
+    <li><a href="#s1">Work</a></li>
+    <li><a href="#s2">About</a></li>
+    <li><a href="#s3">Services</a></li>
+    <li><a href="#s4">Contact</a></li>
+  </ul>
+</nav>
+
+<div id="scroll-root">
+
+<!-- HERO -->
+<section id="s0">
+  <div class="hero-inner">
+    <p class="pre-label"><span></span>Creative Director & Visual Artist</p>
+    <h1>
+      <span class="line">Lara</span>
+      <span class="line italic">Askovic</span>
+      <span class="line outline">Portfolio</span>
+    </h1>
+    <p class="hero-sub">I sculpt digital experiences where light bends to intention — blending motion, geometry, and story into something that stays with you.</p>
+    <div class="hero-cta">
+      <a href="#s1" class="btn btn-fill">Explore Work</a>
+      <a href="#s4" class="btn btn-line">Say Hello</a>
+    </div>
+  </div>
+  <div class="scroll-indicator">Scroll</div>
+</section>
+
+<!-- WORK -->
+<section id="s1">
+  <div style="width:100%">
+    <div class="section-label r">01 — Selected Work</div>
+    <h2 class="r">Work that <em>moves</em></h2>
+    <div class="projects">
+      <div class="project wide r" style="transition-delay:.05s">
+        <div class="project-face">
+          <div class="bg p-bg1"></div>
+          <div class="p-glow" style="width:300px;height:300px;background:#9b72cf;top:-80px;right:-60px"></div>
+          <div class="p-glow" style="width:180px;height:180px;background:#c471f5;bottom:-40px;left:30%"></div>
+        </div>
+        <div class="project-meta">
+          <span class="project-title">Prismatic — Brand Identity System</span>
+          <span class="project-type">Branding · 2024</span>
+        </div>
+      </div>
+      <div class="project r" style="transition-delay:.1s">
+        <div class="project-face">
+          <div class="bg p-bg2"></div>
+          <div class="p-glow" style="width:240px;height:240px;background:#5ecc9a;top:-60px;right:-50px"></div>
+        </div>
+        <div class="project-meta">
+          <span class="project-title">Aether WebGL</span>
+          <span class="project-type">Motion · 2024</span>
+        </div>
+      </div>
+      <div class="project r" style="transition-delay:.15s">
+        <div class="project-face">
+          <div class="bg p-bg3"></div>
+          <div class="p-glow" style="width:200px;height:200px;background:#c9a96e;bottom:-50px;left:-40px"></div>
+        </div>
+        <div class="project-meta">
+          <span class="project-title">Solstice Editorial</span>
+          <span class="project-type">Art Direction · 2023</span>
+        </div>
+      </div>
+      <div class="project r" style="transition-delay:.2s">
+        <div class="project-face">
+          <div class="bg p-bg4"></div>
+          <div class="p-glow" style="width:220px;height:220px;background:#a0c4e8;top:-40px;left:20%"></div>
+        </div>
+        <div class="project-meta">
+          <span class="project-title">Refract — Interactive Experience</span>
+          <span class="project-type">WebGL · 2023</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="s2">
+  <div class="about-grid" style="width:100%">
+    <div>
+      <div class="section-label r">02 — About</div>
+      <h2 class="r">Light bends<br>where I <em>work</em></h2>
+      <p class="r" style="transition-delay:.1s">I'm a creative director and visual artist with roots in fine art and a deep obsession with digital materiality. My practice sits at the edge of the physical and the rendered.</p>
+      <p class="r" style="transition-delay:.15s">For over a decade I've shaped brand identities, immersive installations, and digital experiences for clients across Milan, Berlin, and New York.</p>
+      <div class="stat-row r" style="transition-delay:.25s">
+        <div class="stat"><span class="stat-num">12+</span><span class="stat-label">Years</span></div>
+        <div class="stat"><span class="stat-num">80+</span><span class="stat-label">Projects</span></div>
+        <div class="stat"><span class="stat-num">3</span><span class="stat-label">Continents</span></div>
+      </div>
+    </div>
+    <div class="r" style="transition-delay:.2s;height:480px;border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,.06);background:radial-gradient(ellipse at 40% 40%,#1a0a2e 0%,#050508 70%);position:relative">
+      <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:var(--violet);filter:blur(80px);opacity:.25;top:20%;left:20%;animation:floatA 6s ease-in-out infinite"></div>
+      <div style="position:absolute;width:200px;height:200px;border-radius:50%;background:var(--gold);filter:blur(60px);opacity:.2;bottom:15%;right:15%;animation:floatB 8s ease-in-out infinite"></div>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <div style="font-family:'Playfair Display',serif;font-size:6rem;font-style:italic;color:rgba(255,255,255,.06);line-height:1;text-align:center;user-select:none">L<br>A</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="s3">
+  <div style="width:100%">
+    <div class="section-label r">03 — Services</div>
+    <h2 class="r">What I <em>craft</em></h2>
+    <div class="services-list">
+      <div class="service r" style="transition-delay:.05s">
+        <div class="service-icon" style="background:rgba(155,114,207,.15)">✦</div>
+        <h3>Brand Identity</h3>
+        <p>Visual systems that breathe — logotypes, typographic hierarchies, colour philosophies, and full brand worlds.</p>
+      </div>
+      <div class="service r" style="transition-delay:.1s">
+        <div class="service-icon" style="background:rgba(201,169,110,.15)">◈</div>
+        <h3>Motion & 3D</h3>
+        <p>Real-time WebGL environments, animated brand assets, and cinematic sequences that exist on the boundary of sculpture.</p>
+      </div>
+      <div class="service r" style="transition-delay:.15s">
+        <div class="service-icon" style="background:rgba(94,204,154,.15)">⬡</div>
+        <h3>Digital Experience</h3>
+        <p>Immersive web experiences — scroll narratives, interactive installations, and product storytelling that refuses to be forgotten.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="s4">
+  <div style="width:100%">
+    <div class="section-label r" style="justify-content:center">04 — Contact</div>
+    <h2 class="r" style="text-align:center">Let's make<br>something <em>rare</em></h2>
+    <p class="contact-sub r">Open for projects · Worldwide</p>
+    <a href="mailto:lara@askovic.studio" class="email-link r">lara@askovic.studio</a>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 Lara Askovic — All rights reserved</p>
+  <div class="socials">
+    <a href="#">Instagram</a>
+    <a href="#">Behance</a>
+    <a href="#">LinkedIn</a>
+  </div>
+</footer>
+
+</div><!-- end scroll-root -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════
+//  CURSOR
+// ═══════════════════════════════════════════════════════
+const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+let mx=window.innerWidth/2,my=window.innerHeight/2,rx=mx,ry=my;
+
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+});
+
+(function animCursor(){
+  rx+=(mx-rx)*.13;ry+=(my-ry)*.13;
+  cur2.style.left=rx+'px';cur2.style.top=ry+'px';
+  requestAnimationFrame(animCursor);
+})();
+
+document.querySelectorAll('a,.project,.service,.btn').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+});
+
+// ═══════════════════════════════════════════════════════
+//  THREE.JS SCENE
+// ═══════════════════════════════════════════════════════
+const canvas=document.getElementById('c');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
+renderer.shadowMap.enabled=true;
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,200);
+camera.position.set(0,0,8);
+
+// ── FOG ──
+scene.fog=new THREE.FogExp2(0x050508,.04);
+
+// ── LIGHTS ──
+const ambient=new THREE.AmbientLight(0xffffff,.06);
+scene.add(ambient);
+
+const lights=[
+  {c:0x9b72cf,i:4,p:[5,5,4],obj:null},
+  {c:0x5ecc9a,i:3,p:[-5,-3,3],obj:null},
+  {c:0xc9a96e,i:2.5,p:[0,-5,3],obj:null},
+  {c:0xa0c4e8,i:2,p:[-4,4,2],obj:null},
+  {c:0xe8a0b0,i:1.5,p:[4,-2,5],obj:null},
+];
+lights.forEach(l=>{
+  const pl=new THREE.PointLight(l.c,l.i,25);
+  pl.position.set(...l.p);
+  scene.add(pl);
+  l.obj=pl;
+});
+
+// ── MAIN CRYSTAL GROUP ──
+const mainGroup=new THREE.Group();
+scene.add(mainGroup);
+
+// Central large octahedron
+const octGeo=new THREE.OctahedronGeometry(1.6,0);
+const octMat=new THREE.MeshPhongMaterial({
+  color:0x080818,specular:0xffffff,shininess:400,
+  transparent:true,opacity:.72,side:THREE.DoubleSide,
+});
+const oct=new THREE.Mesh(octGeo,octMat);
+mainGroup.add(oct);
+
+// Wireframe on crystal
+const wfMat=new THREE.MeshBasicMaterial({color:0xffffff,wireframe:true,transparent:true,opacity:.05});
+oct.add(new THREE.Mesh(octGeo,wfMat));
+
+// Inner glowing core
+const coreGeo=new THREE.IcosahedronGeometry(.7,0);
+const coreMat=new THREE.MeshPhongMaterial({
+  color:0x110022,specular:0xc471f5,shininess:500,
+  emissive:0x220044,emissiveIntensity:.4,
+  transparent:true,opacity:.6,
+});
+const core=new THREE.Mesh(coreGeo,coreMat);
+oct.add(core);
+
+// ── SATELLITE CRYSTALS ──
+const satellites=[];
+const satDefs=[
+  {geo:new THREE.OctahedronGeometry(.45,0),color:0x9b72cf,spec:0xffffff,R:3.2,speed:.38,phase:0,   yOff:.6, rotS:.9},
+  {geo:new THREE.TetrahedronGeometry(.38,0),color:0x5ecc9a,spec:0xffffff,R:2.7,speed:-.31,phase:1.8,yOff:-.5,rotS:1.2},
+  {geo:new THREE.OctahedronGeometry(.28,0),color:0xc9a96e,spec:0xffffff,R:3.8,speed:.52,phase:3.6,yOff:.3, rotS:.7},
+  {geo:new THREE.TetrahedronGeometry(.22,0),color:0xa0c4e8,spec:0xffffff,R:2.3,speed:-.44,phase:2.4,yOff:-.8,rotS:1.5},
+  {geo:new THREE.OctahedronGeometry(.18,0),color:0xe8a0b0,spec:0xffffff,R:4.4,speed:.25,phase:5.1,yOff:.1, rotS:.6},
+];
+satDefs.forEach(d=>{
+  const mat=new THREE.MeshPhongMaterial({color:d.color,specular:d.spec,shininess:300,transparent:true,opacity:.8});
+  const m=new THREE.Mesh(d.geo,mat);
+  const wm=new THREE.Mesh(d.geo,new THREE.MeshBasicMaterial({color:0xffffff,wireframe:true,transparent:true,opacity:.1}));
+  m.add(wm);
+  mainGroup.add(m);
+  satellites.push({mesh:m,...d});
+});
+
+// ── PARTICLE SYSTEM ──
+const PARTICLES=300;
+const pPositions=new Float32Array(PARTICLES*3);
+const pColors=new Float32Array(PARTICLES*3);
+const palette=[
+  [.61,.45,.81],[.37,.8,.6],[.79,.66,.43],[.63,.77,.91],[.91,.63,.69]
+];
+for(let i=0;i<PARTICLES;i++){
+  pPositions[i*3]=(Math.random()-.5)*25;
+  pPositions[i*3+1]=(Math.random()-.5)*20;
+  pPositions[i*3+2]=(Math.random()-.5)*15-3;
+  const col=palette[Math.floor(Math.random()*palette.length)];
+  pColors[i*3]=col[0];pColors[i*3+1]=col[1];pColors[i*3+2]=col[2];
+}
+const pGeo=new THREE.BufferGeometry();
+pGeo.setAttribute('position',new THREE.BufferAttribute(pPositions,3));
+pGeo.setAttribute('color',new THREE.BufferAttribute(pColors,3));
+const pMat=new THREE.PointsMaterial({size:.025,vertexColors:true,transparent:true,opacity:.5,sizeAttenuation:true});
+const particles=new THREE.Points(pGeo,pMat);
+scene.add(particles);
+
+// ── RING HALO ──
+const ringGeo=new THREE.TorusGeometry(2.6,.012,2,120);
+const ringMat=new THREE.MeshBasicMaterial({color:0x9b72cf,transparent:true,opacity:.18});
+const ring=new THREE.Mesh(ringGeo,ringMat);
+ring.rotation.x=Math.PI/2.8;
+mainGroup.add(ring);
+
+const ring2Geo=new THREE.TorusGeometry(3.4,.008,2,120);
+const ring2Mat=new THREE.MeshBasicMaterial({color:0x5ecc9a,transparent:true,opacity:.1});
+const ring2=new THREE.Mesh(ring2Geo,ring2Mat);
+ring2.rotation.x=Math.PI/3.5;ring2.rotation.z=.4;
+mainGroup.add(ring2);
+
+// ── FLOATING FRAGMENTS ──
+const frags=[];
+for(let i=0;i<18;i++){
+  const s=.05+Math.random()*.18;
+  const g=Math.random()>.5?new THREE.OctahedronGeometry(s,0):new THREE.TetrahedronGeometry(s,0);
+  const col=palette[Math.floor(Math.random()*palette.length)];
+  const m=new THREE.MeshPhongMaterial({
+    color:new THREE.Color(col[0],col[1],col[2]),
+    specular:0xffffff,shininess:200,transparent:true,opacity:.4+Math.random()*.3
+  });
+  const mesh=new THREE.Mesh(g,m);
+  mesh.position.set((Math.random()-.5)*10,(Math.random()-.5)*8,(Math.random()-.5)*6-2);
+  const speed={x:.2+Math.random()*.4,y:.15+Math.random()*.3,z:.1+Math.random()*.2};
+  const phase={x:Math.random()*Math.PI*2,y:Math.random()*Math.PI*2,z:Math.random()*Math.PI*2};
+  scene.add(mesh);
+  frags.push({mesh,speed,phase,basePos:mesh.position.clone()});
+}
+
+// ── SCROLL SECTIONS ──
+const TOTAL_SECTIONS=5;
+let scrollProgress=0; // 0→1 across whole page
+
+function getScrollProgress(){
+  const maxScroll=document.body.scrollHeight-innerHeight;
+  return maxScroll>0?window.scrollY/maxScroll:0;
+}
+
+// Section-local progress (0→1 within each section)
+function getSectionProgress(idx){
+  const secs=document.querySelectorAll('section');
+  if(idx>=secs.length)return 0;
+  const s=secs[idx];
+  const top=s.getBoundingClientRect().top;
+  const h=s.offsetHeight;
+  return Math.max(0,Math.min(1,-top/Math.max(h,1)));
+}
+
+// ── MOUSE PARALLAX ──
+let mouseXN=0,mouseYN=0,tMouseX=0,tMouseY=0;
+document.addEventListener('mousemove',e=>{
+  mouseXN=(e.clientX/innerWidth-.5)*2;
+  mouseYN=(e.clientY/innerHeight-.5)*2;
+});
+
+// ── COLOUR LERP ──
+function lerpColor(a,b,t){
+  return {
+    r:a.r+(b.r-a.r)*t,
+    g:a.g+(b.g-a.g)*t,
+    b:a.b+(b.b-a.b)*t
+  };
+}
+const bgColors=[
+  {r:.02,g:.02,b:.06},  // hero     — deep indigo
+  {r:.04,g:.01,b:.08},  // work     — violet
+  {r:.01,g:.04,b:.03},  // about    — deep teal
+  {r:.06,g:.03,b:.01},  // services — amber ember
+  {r:.02,g:.02,b:.06},  // contact  — back to indigo
+];
+
+// ── RESIZE ──
+window.addEventListener('resize',()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
+
+// ── SCROLL LISTENER ──
+window.addEventListener('scroll',()=>{
+  scrollProgress=getScrollProgress();
+},{ passive:true });
+
+// ═══════════════════════════════════════════════════════
+//  MAIN ANIMATION LOOP
+// ═══════════════════════════════════════════════════════
+const clock=new THREE.Clock();
+
+function lerp(a,b,t){return a+(b-a)*t}
+
+function animate(){
+  requestAnimationFrame(animate);
+  const t=clock.getElapsedTime();
+  const sp=scrollProgress; // 0→1
+
+  // smooth mouse
+  tMouseX+=( mouseXN-tMouseX)*.06;
+  tMouseY+=(-mouseYN-tMouseY)*.06;
+
+  // ── BACKGROUND colour from scroll ──
+  const section=Math.min(sp*(TOTAL_SECTIONS-1),TOTAL_SECTIONS-2);
+  const sIdx=Math.floor(section);
+  const sFrac=section-sIdx;
+  const bg=lerpColor(bgColors[sIdx],bgColors[sIdx+1],sFrac);
+  renderer.setClearColor(new THREE.Color(bg.r,bg.g,bg.b),1);
+
+  // ── MAIN CRYSTAL TRANSFORMS ──
+  // Hero (sp 0→.2): big, front-center, slow spin
+  // Work (sp .2→.4): drift right, tilt, speed up
+  // About (sp .4→.6): drift left, morph rotation
+  // Services (sp .6→.8): come close, fast spin
+  // Contact (sp .8→1): recede, gentle
+
+  let cX=0,cY=0,cZ=0,cScale=1,cSpinMult=1;
+  if(sp<.25){
+    const p=sp/.25;
+    cX=lerp(0,2,p); cY=lerp(0,-.5,p); cScale=lerp(1.4,1.1,p); cSpinMult=lerp(.8,1.2,p);
+  } else if(sp<.5){
+    const p=(sp-.25)/.25;
+    cX=lerp(2,-2.2,p); cY=lerp(-.5,.3,p); cScale=lerp(1.1,.95,p); cSpinMult=lerp(1.2,1.6,p);
+  } else if(sp<.75){
+    const p=(sp-.5)/.25;
+    cX=lerp(-2.2,2.5,p); cY=lerp(.3,-.2,p); cScale=lerp(.95,1.3,p); cSpinMult=lerp(1.6,2.2,p);
+  } else {
+    const p=(sp-.75)/.25;
+    cX=lerp(2.5,0,p); cY=lerp(-.2,0,p); cScale=lerp(1.3,1,p); cSpinMult=lerp(2.2,.7,p);
+  }
+
+  mainGroup.position.x=lerp(mainGroup.position.x,cX+tMouseX*.5,.04);
+  mainGroup.position.y=lerp(mainGroup.position.y,cY+tMouseY*.4,.04);
+  mainGroup.position.z=lerp(mainGroup.position.z,cZ,.04);
+  mainGroup.scale.setScalar(lerp(mainGroup.scale.x,cScale,.04));
+
+  // Spin — scroll drives both axes
+  oct.rotation.x=t*.18*cSpinMult+tMouseY*.3+sp*Math.PI*1.5;
+  oct.rotation.y=t*.25*cSpinMult+tMouseX*.4+sp*Math.PI*2.5;
+  core.rotation.x=-t*.22*cSpinMult;
+  core.rotation.y= t*.38*cSpinMult;
+
+  // Ring tilt from scroll
+  ring.rotation.z=t*.05+sp*Math.PI;
+  ring.rotation.x=Math.PI/2.8+sp*.8;
+  ring2.rotation.z=-.4+sp*Math.PI*.6;
+
+  // Sattelites
+  satellites.forEach((s,i)=>{
+    const angle=t*s.speed+s.phase+sp*Math.PI*(1+i*.3);
+    const r=s.R*(1+sp*.3);
+    s.mesh.position.x=Math.cos(angle)*r;
+    s.mesh.position.y=s.yOff+Math.sin(angle*.7)*(.5+sp*.4);
+    s.mesh.position.z=Math.sin(angle)*r*.55;
+    s.mesh.rotation.x=t*s.rotS;
+    s.mesh.rotation.y=t*s.rotS*.7;
+  });
+
+  // Fragments float
+  frags.forEach(f=>{
+    f.mesh.position.x=f.basePos.x+Math.sin(t*f.speed.x+f.phase.x)*.6;
+    f.mesh.position.y=f.basePos.y+Math.sin(t*f.speed.y+f.phase.y)*.5;
+    f.mesh.position.z=f.basePos.z+Math.sin(t*f.speed.z+f.phase.z)*.3;
+    f.mesh.rotation.x=t*f.speed.x;
+    f.mesh.rotation.y=t*f.speed.y;
+  });
+
+  // Particles drift with scroll
+  particles.rotation.y=t*.01+sp*Math.PI*.5;
+  particles.rotation.x=t*.005+sp*.3;
+
+  // ── LIGHT ANIMATION ──
+  const lT=t*.6;
+  lights[0].obj.position.x=Math.sin(lT)*6+tMouseX*2;
+  lights[0].obj.position.y=Math.cos(lT*.7)*5+tMouseY*2;
+  lights[1].obj.position.x=Math.cos(lT*.8)*5;
+  lights[1].obj.position.y=Math.sin(lT*.6)*4;
+  lights[2].obj.position.x=Math.sin(lT*.5+1.5)*4+sp*3;
+  lights[2].obj.position.z=Math.cos(lT*.4)*3+4;
+
+  // Colour-shift lights with scroll
+  const hue=sp*360;
+  lights[0].obj.color.setHSL((hue/360+.75)%1,.8,.6);
+  lights[1].obj.color.setHSL((hue/360+.33)%1,.9,.55);
+  lights[2].obj.color.setHSL((hue/360+.1)%1,.85,.5);
+
+  // Camera breath
+  camera.position.z=8-sp*2.5+Math.sin(t*.2)*.1;
+  camera.position.x=tMouseX*.3;
+  camera.position.y=tMouseY*.25;
+  camera.lookAt(mainGroup.position.x*.5,mainGroup.position.y*.3,0);
+
+  renderer.render(scene,camera);
+}
+animate();
+
+// ═══════════════════════════════════════════════════════
+//  SCROLL REVEAL
+// ═══════════════════════════════════════════════════════
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting) e.target.classList.add('v');
+  });
+},{threshold:.1});
+document.querySelectorAll('.r').forEach(el=>observer.observe(el));
+
+// ═══════════════════════════════════════════════════════
+//  TEXT PARALLAX (hero lines shift on scroll)
+// ═══════════════════════════════════════════════════════
+function onScroll(){
+  const y=window.scrollY;
+  const hero=document.getElementById('s0');
+  const hH=hero.offsetHeight;
+  const p=Math.min(y/hH,1);
+
+  const lines=document.querySelectorAll('h1 .line');
+  if(lines.length>=3){
+    lines[0].style.transform=`translateY(${-p*60}px)`;
+    lines[1].style.transform=`translateY(${p*30}px)`;
+    lines[2].style.transform=`translateX(${p*80}px)`;
+    lines[0].style.opacity=1-p*1.2;
+    lines[1].style.opacity=1-p*.8;
+    lines[2].style.opacity=1-p*1.5;
+  }
+
+  const heroSub=document.querySelector('.hero-sub');
+  const heroCta=document.querySelector('.hero-cta');
+  if(heroSub) heroSub.style.transform=`translateY(${p*100}px)`;
+  if(heroCta) heroCta.style.transform=`translateY(${p*120}px)`;
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+
+// ═══════════════════════════════════════════════════════
+//  CARD TILT on hover
+// ═══════════════════════════════════════════════════════
+document.querySelectorAll('.project,.service').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=((e.clientX-r.left)/r.width-.5)*2;
+    const y=((e.clientY-r.top)/r.height-.5)*2;
+    card.style.transform=`translateY(-6px) rotateX(${-y*5}deg) rotateY(${x*6}deg)`;
+    card.style.transition='transform .1s';
+  });
+  card.addEventListener('mouseleave',()=>{
+    card.style.transform='';
+    card.style.transition='transform .6s cubic-bezier(.23,1,.32,1)';
+  });
+});
+
+// ── CSS additions for float animations ──
+const style=document.createElement('style');
+style.textContent=`
+@keyframes floatA{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,-20px) scale(1.1)}}
+@keyframes floatB{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-15px,15px) scale(.9)}}
+h1 .line{transition:transform .8s cubic-bezier(.23,1,.32,1),opacity .8s cubic-bezier(.23,1,.32,1)}
+.project{transform-style:preserve-3d;perspective:600px}
+.service{transform-style:preserve-3d;perspective:800px}
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
