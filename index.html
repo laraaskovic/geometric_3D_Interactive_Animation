@@ -380,6 +380,7 @@ section::before{
   font-family:'Syne',sans-serif;
   font-weight:700;font-size:1.15rem;line-height:1.25;
   color:#fff;margin-bottom:1rem;letter-spacing:-.01em;
+  text-shadow:0 0 18px rgba(var(--proj-rgb),.08);
 }
 .proj-desc{font-size:.88rem;line-height:1.82;color:var(--muted);margin-bottom:1.5rem}
 .proj-stack{display:flex;flex-wrap:wrap;gap:.4rem}
@@ -394,12 +395,12 @@ section::before{
 
 .proj-arrow{
   position:absolute;top:2.5rem;right:2.5rem;
-  font-size:1rem;opacity:.12;
+  font-size:1rem;opacity:.22;color:rgba(var(--proj-rgb),.82);
   transform:rotate(-45deg);
   transition:opacity .3s,transform .3s;
   font-family:var(--mono);
 }
-.proj:hover .proj-arrow{opacity:.5;transform:rotate(-45deg) translate(3px,-3px)}
+.proj:hover .proj-arrow{opacity:.9;transform:rotate(-45deg) translate(3px,-3px)}
 
 /* ── SKILLS ── */
 #skills{padding-top:8rem;padding-bottom:8rem}
@@ -427,7 +428,7 @@ section::before{
 
 .skill-list{list-style:none;display:flex;flex-direction:column;gap:.55rem}
 .skill-list li{
-  font-size:.88rem;color:var(--muted);
+  font-size:.88rem;color:rgba(240,237,230,.62);
   display:flex;align-items:center;gap:.55rem;
 }
 .skill-list li::before{content:'→';color:rgba(255,255,255,.1);font-size:.65rem;flex-shrink:0}
