@@ -18,6 +18,9 @@
   --emerald:#5ecc9a;
   --ice:#a0c4e8;
   --rose:#e8a0b0;
+  --panel:rgba(255,255,255,.03);
+  --line:rgba(255,255,255,.07);
+  --shadow:0 30px 90px rgba(0,0,0,.28);
   --mono:'Syne Mono',monospace;
 }
 
@@ -29,6 +32,16 @@ body{
   font-weight:400;
   overflow-x:hidden;
   cursor:none;
+  min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;inset:-12%;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(circle at 18% 18%,rgba(160,196,232,.12),transparent 26%),
+    radial-gradient(circle at 82% 16%,rgba(201,169,110,.12),transparent 22%),
+    radial-gradient(circle at 50% 74%,rgba(155,114,207,.14),transparent 34%);
+  opacity:.9;
+  transform:translate3d(0,calc(var(--scroll-p,0) * -40px),0) scale(1.02);
 }
 
 /* ── CURSOR ── */
@@ -60,6 +73,15 @@ nav{
   position:fixed;top:0;left:0;right:0;z-index:200;
   padding:2rem 4.5rem;
   display:flex;justify-content:space-between;align-items:center;
+  background:linear-gradient(to bottom,rgba(6,5,15,.34),rgba(6,5,15,0));
+  transition:padding .45s cubic-bezier(.22,1,.36,1),background .45s ease,backdrop-filter .45s ease,border-color .45s ease;
+  border-bottom:1px solid transparent;
+}
+body.scrolled nav{
+  padding:1.25rem 4.5rem;
+  background:rgba(8,8,18,.58);
+  backdrop-filter:blur(18px);
+  border-bottom-color:rgba(255,255,255,.05);
 }
 .logo{
   font-family:'DM Serif Display',serif;font-style:italic;
@@ -90,6 +112,7 @@ main{position:relative;z-index:10}
   gap:2rem;
 }
 .hero-text{max-width:540px}
+.hero-text,.hero-text > *,.hero-name span,.scroll-hint{will-change:transform,opacity}
 
 .tag{
   display:inline-flex;align-items:center;gap:.6rem;
@@ -159,15 +182,25 @@ main{position:relative;z-index:10}
   position:absolute;bottom:2.5rem;left:4.5rem;
   display:flex;align-items:center;gap:.8rem;
   font-family:var(--mono);font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;
-  color:rgba(255,255,255,.15);
+  color:rgba(255,255,255,.22);
   opacity:0;animation:fadeUp .7s 1.2s forwards;
 }
 .scroll-hint-line{
-  width:40px;height:1px;
-  background:linear-gradient(to right,rgba(255,255,255,.25),transparent);
-  animation:pulse 2s ease-in-out infinite;
+  position:relative;overflow:hidden;
+  width:44px;height:1px;border-radius:999px;
+  background:linear-gradient(90deg,rgba(255,255,255,.08),rgba(255,255,255,.34),rgba(255,255,255,0));
 }
-@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.scroll-hint-line::after{
+  content:'';position:absolute;top:50%;left:0;
+  width:14px;height:5px;border-radius:999px;
+  background:linear-gradient(90deg,rgba(201,169,110,0),rgba(201,169,110,.95),rgba(255,255,255,0));
+  transform:translate3d(-140%,-50%,0);
+  animation:scan 2.8s cubic-bezier(.22,1,.36,1) infinite;
+}
+@keyframes scan{
+  0%{transform:translate3d(-140%,-50%,0)}
+  55%,100%{transform:translate3d(360%,-50%,0)}
+}
 
 /* ── SECTIONS SHARED ── */
 section{position:relative;padding:9rem 4.5rem}
@@ -237,7 +270,8 @@ section{position:relative;padding:9rem 4.5rem}
 .proj{
   background:var(--bg);padding:2.8rem;
   position:relative;overflow:hidden;cursor:pointer;
-  transition:background .4s;
+  transition:background .4s,transform .5s cubic-bezier(.22,1,.36,1),border-color .4s ease;
+  backdrop-filter:blur(14px);
 }
 .proj::before{
   content:'';position:absolute;inset:0;
@@ -245,7 +279,7 @@ section{position:relative;padding:9rem 4.5rem}
   opacity:0;transition:opacity .4s;pointer-events:none;
 }
 .proj:hover::before{opacity:1}
-.proj:hover{background:rgba(255,255,255,.02)}
+.proj:hover{background:rgba(255,255,255,.02);transform:translateY(-4px)}
 
 .proj-tag{
   font-family:var(--mono);font-size:.57rem;letter-spacing:.18em;text-transform:uppercase;
@@ -288,6 +322,7 @@ section{position:relative;padding:9rem 4.5rem}
   border:1px solid rgba(255,255,255,.06);border-radius:6px;
   background:rgba(255,255,255,.02);
   transition:border-color .4s,transform .4s cubic-bezier(.23,1,.32,1);
+  backdrop-filter:blur(14px);
 }
 .skill-block:hover{border-color:rgba(201,169,110,.22);transform:translateY(-5px)}
 
@@ -333,6 +368,8 @@ section{position:relative;padding:9rem 4.5rem}
   border:1px solid rgba(255,255,255,.07);border-radius:10px;
   padding:2.5rem;background:rgba(255,255,255,.025);
   position:relative;overflow:hidden;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(16px);
 }
 .about-card::before{
   content:'';position:absolute;
@@ -402,22 +439,31 @@ footer p{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;color:rgb
 
 /* ── SCROLL REVEAL ── */
 .r{
-  opacity:0;transform:translateY(28px);
-  transition:opacity .85s cubic-bezier(.23,1,.32,1),transform .85s cubic-bezier(.23,1,.32,1);
+  opacity:0;filter:blur(8px);transform:translate3d(0,34px,0) scale(.985);
+  transition:opacity .95s cubic-bezier(.23,1,.32,1),transform .95s cubic-bezier(.23,1,.32,1),filter .95s cubic-bezier(.23,1,.32,1);
 }
-.r.v{opacity:1;transform:none}
+.r.v{opacity:1;filter:blur(0);transform:none}
 
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
   #hero{grid-template-columns:1fr;padding:6rem 2rem 0}
   .hero-right{display:none}
   nav{padding:1.5rem 2rem}
+  body.scrolled nav{padding:1rem 2rem}
   section,#exp,#projects,#skills,#about,#contact{padding-left:2rem;padding-right:2rem}
   .proj-grid{grid-template-columns:1fr}
   .skills-grid{grid-template-columns:1fr 1fr}
   .about-inner{grid-template-columns:1fr}
   .exp-item{grid-template-columns:1fr;gap:1rem}
   .scroll-hint{left:2rem}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  body{cursor:auto}
+  #cDot,#cRing{display:none}
+  .tag,.hero-role,.hero-bio,.hero-links,.scroll-hint,.hero-name .ln1,.hero-name .ln2{animation:none;opacity:1}
+  .hero-name .ln1,.hero-name .ln2,.r{transform:none}
+  .r{filter:none;transition:none;opacity:1}
 }
 </style>
 </head>
@@ -696,13 +742,48 @@ footer p{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;color:rgb
 (function(){
   'use strict';
 
+  const root = document.documentElement;
+  const hero = document.getElementById('hero');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isCompact = window.matchMedia('(max-width: 900px)').matches;
+
+  function clamp(value, min, max){
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function smoothstep(value){
+    const t = clamp(value, 0, 1);
+    return t * t * (3 - 2 * t);
+  }
+
+  const motion = window.__siteMotion = {
+    targetScroll: 0,
+    scroll: 0,
+    targetHero: 0,
+    hero: 0,
+    targetMouseX: innerWidth * .5,
+    targetMouseY: innerHeight * .5,
+    mouseX: innerWidth * .5,
+    mouseY: innerHeight * .5
+  };
+
+  function refreshMotionTargets(){
+    const max = Math.max(document.body.scrollHeight - innerHeight, 1);
+    const heroHeight = hero ? Math.max(hero.offsetHeight, 1) : innerHeight;
+    motion.targetScroll = clamp(window.scrollY / max, 0, 1);
+    motion.targetHero = clamp(window.scrollY / heroHeight, 0, 1);
+  }
+
   const canvas = document.getElementById('c');
   const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.setSize(innerWidth, innerHeight);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.06;
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x050508, 0.026);
+  scene.fog = new THREE.FogExp2(0x050508, 0.022);
 
   const camera = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, 0.1, 200);
   camera.position.set(0, 0, 9);
@@ -738,7 +819,11 @@ footer p{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;color:rgb
 
   // Wireframe shell on the outer oct
   oct.add(new THREE.Mesh(octGeo,
-    new THREE.MeshBasicMaterial({color:0xffffff, wireframe:true, transparent:true, opacity:0.04})
+    new THREE.MeshBasicMaterial({color:0xffffff, wireframe:true, transparent:true, opacity:0.035})
+  ));
+  oct.add(new THREE.LineSegments(
+    new THREE.EdgesGeometry(octGeo),
+    new THREE.LineBasicMaterial({color:0xe8c49a, transparent:true, opacity:0.12})
   ));
 
   // Mid translucent shell
@@ -760,23 +845,82 @@ footer p{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;color:rgb
   const core = new THREE.Mesh(coreGeo, coreMat);
   oct.add(core);
 
+  const halo = new THREE.Mesh(
+    new THREE.TorusGeometry(5.35, 0.04, 18, 220),
+    new THREE.MeshBasicMaterial({color:0xc9a96e, transparent:true, opacity:0.18})
+  );
+  halo.rotation.set(Math.PI * .5, 0, Math.PI * .12);
+  G.add(halo);
+
+  const haloSoft = new THREE.Mesh(
+    new THREE.TorusGeometry(4.55, 0.028, 18, 180),
+    new THREE.MeshBasicMaterial({color:0xa0c4e8, transparent:true, opacity:0.12})
+  );
+  haloSoft.rotation.set(Math.PI * .28, Math.PI * .18, 0);
+  G.add(haloSoft);
+
+  const moteGroup = new THREE.Group();
+  G.add(moteGroup);
+  const motePalette = [0xf3e8d2, 0xa0c4e8, 0xc9a96e, 0x9b72cf];
+  const motes = Array.from({length: isCompact ? 7 : 12}, (_, i) => {
+    const mesh = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(.08 + Math.random() * .08, 0),
+      new THREE.MeshBasicMaterial({
+        color:motePalette[i % motePalette.length],
+        transparent:true,
+        opacity:.52
+      })
+    );
+    moteGroup.add(mesh);
+    return {
+      mesh,
+      radius:5.1 + Math.random() * 1.3,
+      speed:.18 + Math.random() * .22,
+      phase:Math.random() * Math.PI * 2,
+      lift:(Math.random() - .5) * 2.5
+    };
+  });
+
+  const starGeo = new THREE.BufferGeometry();
+  const starCount = isCompact ? 120 : 220;
+  const starPos = new Float32Array(starCount * 3);
+  for(let i = 0; i < starCount; i++){
+    const radius = 7.6 + Math.random() * 7.8;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos((Math.random() * 2) - 1);
+    starPos[i * 3]     = radius * Math.sin(phi) * Math.cos(theta);
+    starPos[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+    starPos[i * 3 + 2] = radius * Math.cos(phi);
+  }
+  starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+  const starField = new THREE.Points(
+    starGeo,
+    new THREE.PointsMaterial({
+      color:0xf8f1e6,
+      size:isCompact ? 0.04 : 0.055,
+      transparent:true,
+      opacity:.45,
+      depthWrite:false,
+      blending:THREE.AdditiveBlending,
+      sizeAttenuation:true
+    })
+  );
+  scene.add(starField);
+
 
   // ── STATE ──
-  let scrollPct = 0;
-  window.addEventListener('scroll', () => {
-    const max = document.body.scrollHeight - innerHeight;
-    scrollPct = max > 0 ? window.scrollY / max : 0;
-  }, {passive:true});
-
-  let mx = innerWidth*.5,  my = innerHeight*.5;
-  let smx = mx, smy = my;
-  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-
+  document.addEventListener('mousemove', e => {
+    motion.targetMouseX = e.clientX;
+    motion.targetMouseY = e.clientY;
+  });
+  window.addEventListener('scroll', refreshMotionTargets, {passive:true});
   window.addEventListener('resize', () => {
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(innerWidth, innerHeight);
+    refreshMotionTargets();
   });
+  refreshMotionTargets();
 
   // Background colour ramps keyed to scroll position
   const bgRamp = [
@@ -793,77 +937,96 @@ footer p{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;color:rgb
     return {r:lerp(a.r,b.r,t), g:lerp(a.g,b.g,t), b:lerp(a.b,b.b,t)};
   }
 
+  const beats = [
+    {x: 2.7, y: 0.00, scale:1.14, spin:.82},
+    {x: 1.5, y:-0.42, scale:1.04, spin:1.02},
+    {x:-2.5, y: 0.18, scale:0.93, spin:1.34},
+    {x:-0.2, y:-0.16, scale:1.00, spin:1.62},
+    {x: 2.4, y: 0.10, scale:1.09, spin:1.92},
+    {x: 0.0, y: 0.00, scale:1.00, spin:.84}
+  ];
+
   const clock = new THREE.Clock();
 
   function animate(){
     requestAnimationFrame(animate);
-    const t  = clock.getElapsedTime();
-    const sp = scrollPct;
+    const t = clock.getElapsedTime();
+    motion.scroll += (motion.targetScroll - motion.scroll) * (reducedMotion ? .14 : .065);
+    motion.hero += (motion.targetHero - motion.hero) * (reducedMotion ? .18 : .095);
+    motion.mouseX += (motion.targetMouseX - motion.mouseX) * (reducedMotion ? .14 : .05);
+    motion.mouseY += (motion.targetMouseY - motion.mouseY) * (reducedMotion ? .14 : .05);
 
-    // Smooth mouse
-    smx += (mx - smx) * .05;
-    smy += (my - smy) * .05;
-    const mxN = (smx / innerWidth  - .5) * 2;
-    const myN = (smy / innerHeight - .5) * 2;
+    const sp = motion.scroll;
+    const mxN = (motion.mouseX / innerWidth - .5) * 2;
+    const myN = (motion.mouseY / innerHeight - .5) * 2;
 
-    // Background colour
-    const si   = Math.min(sp * (bgRamp.length-1), bgRamp.length-2);
+    root.style.setProperty('--scroll-p', sp.toFixed(4));
+    document.body.classList.toggle('scrolled', sp > .03);
+
+    const si = Math.min(sp * (bgRamp.length - 1), bgRamp.length - 2);
     const sIdx = Math.floor(si);
-    const bg   = lerpC(bgRamp[sIdx], bgRamp[sIdx+1], si-sIdx);
+    const bg = lerpC(bgRamp[sIdx], bgRamp[sIdx + 1], smoothstep(si - sIdx));
     renderer.setClearColor(new THREE.Color(bg.r, bg.g, bg.b), 1);
 
-    // Crystal target transform (drifts through scroll)
-    let tX, tY, tScale, spinM;
-    if(sp < .2){
-      const p = sp/.2;
-      tX=lerp(2.8, 2.0, p); tY=lerp(0, -.3, p); tScale=lerp(1.15,1.05,p); spinM=lerp(.8,1.0,p);
-    } else if(sp < .4){
-      const p = (sp-.2)/.2;
-      tX=lerp(2.0,-2.6,p); tY=lerp(-.3,.2,p); tScale=lerp(1.05,.92,p); spinM=lerp(1.0,1.4,p);
-    } else if(sp < .6){
-      const p = (sp-.4)/.2;
-      tX=lerp(-2.6, 0,  p); tY=lerp(.2,-.1,p); tScale=lerp(.92,1.0,p); spinM=lerp(1.4,1.7,p);
-    } else if(sp < .8){
-      const p = (sp-.6)/.2;
-      tX=lerp(0, 2.8,p); tY=lerp(-.1,.1,p); tScale=lerp(1.0,1.1,p); spinM=lerp(1.7,2.0,p);
-    } else {
-      const p = (sp-.8)/.2;
-      tX=lerp(2.8, 0, p); tY=lerp(.1, 0, p); tScale=lerp(1.1,1.0,p); spinM=lerp(2.0,.7,p);
-    }
+    const path = sp * (beats.length - 1);
+    const idx = Math.min(Math.floor(path), beats.length - 2);
+    const mix = smoothstep(path - idx);
+    const curr = beats[idx];
+    const next = beats[idx + 1];
+    const tX = lerp(curr.x, next.x, mix);
+    const tY = lerp(curr.y, next.y, mix);
+    const tScale = lerp(curr.scale, next.scale, mix);
+    const spinM = lerp(curr.spin, next.spin, mix);
 
-    // Lazy follow
-    G.position.x = lerp(G.position.x, tX + mxN*.6, .04);
-    G.position.y = lerp(G.position.y, tY - myN*.4, .04);
-    G.scale.setScalar(lerp(G.scale.x, tScale, .04));
+    G.position.x = lerp(G.position.x, tX + mxN * .55, .045);
+    G.position.y = lerp(G.position.y, tY - myN * .38, .045);
+    G.scale.setScalar(lerp(G.scale.x, tScale, .05));
 
-    // Rotations
-    oct.rotation.x  =  t*.18*spinM + myN*.25 + sp*Math.PI*1.5;
-    oct.rotation.y  =  t*.24*spinM + mxN*.35 + sp*Math.PI*2.5;
-    core.rotation.x = -t*.20*spinM;
-    core.rotation.y  =  t*.35*spinM;
-    shell.rotation.x =  t*.12*spinM + .5;
-    shell.rotation.y = -t*.16*spinM;
+    oct.rotation.x = t * .16 * spinM + myN * .18 + sp * Math.PI * 1.15;
+    oct.rotation.y = t * .20 * spinM + mxN * .28 + sp * Math.PI * 1.85;
+    core.rotation.x = -t * .18 * spinM;
+    core.rotation.y =  t * .31 * spinM;
+    shell.rotation.x = t * .10 * spinM + .55;
+    shell.rotation.y = -t * .13 * spinM;
+    halo.rotation.z += .0018;
+    haloSoft.rotation.y -= .0012;
+    starField.rotation.y = t * .012 + sp * .55;
+    starField.rotation.x = Math.sin(t * .08) * .05;
 
-    // Animated lights
-    const lt = t*.55;
-    lights[0].obj.position.x = Math.sin(lt)*7   + mxN*2.5;
-    lights[0].obj.position.y = Math.cos(lt*.7)*6 + myN*2;
-    lights[1].obj.position.x = Math.cos(lt*.8)*6;
-    lights[1].obj.position.y = Math.sin(lt*.6)*5;
-    lights[2].obj.position.x = Math.sin(lt*.5+1.5)*5 + sp*2;
-    lights[2].obj.position.z = Math.cos(lt*.4)*4 + 5;
+    motes.forEach((mote, i) => {
+      const angle = t * mote.speed + mote.phase + sp * Math.PI * (.45 + i * .01);
+      const bob = Math.sin(t * (.65 + i * .07) + mote.phase) * .22;
+      mote.mesh.position.set(
+        Math.cos(angle) * mote.radius,
+        mote.lift + bob,
+        Math.sin(angle) * mote.radius * .78
+      );
+      const scalar = .85 + Math.sin(t * 1.35 + mote.phase) * .22;
+      mote.mesh.scale.setScalar(scalar);
+    });
 
-    // Hue-shift accent lights with scroll
-    const hue = sp*360;
-    lights[0].obj.color.setHSL((hue/360+.75)%1, .85, .6);
-    lights[1].obj.color.setHSL((hue/360+.33)%1, .90, .55);
-    lights[2].obj.color.setHSL((hue/360+.10)%1, .85, .5);
+    const lt = t * .42;
+    lights[0].obj.position.x = Math.sin(lt) * 6.8 + mxN * 2.2;
+    lights[0].obj.position.y = Math.cos(lt * .8) * 5.8 + myN * 1.7;
+    lights[1].obj.position.x = Math.cos(lt * .78) * 5.8;
+    lights[1].obj.position.y = Math.sin(lt * .62) * 4.8;
+    lights[2].obj.position.x = Math.sin(lt * .54 + 1.5) * 4.8 + sp * 1.8;
+    lights[2].obj.position.z = Math.cos(lt * .38) * 4.1 + 5;
+    lights[0].obj.intensity = 4.6 + Math.sin(t * .7) * .5;
+    lights[1].obj.intensity = 3.2 + Math.cos(t * .55) * .35;
+    lights[2].obj.intensity = 2.8 + Math.sin(t * .48 + .6) * .3;
 
-    // Camera breath + parallax
-    camera.position.z = 9 - sp*2 + Math.sin(t*.18)*.08;
-    camera.position.x = mxN*.25;
-    camera.position.y = myN*.20;
-    camera.lookAt(G.position.x*.4, G.position.y*.3, 0);
+    const hue = sp * 360;
+    lights[0].obj.color.setHSL((hue/360 + .75) % 1, .85, .6);
+    lights[1].obj.color.setHSL((hue/360 + .33) % 1, .72, .58);
+    lights[2].obj.color.setHSL((hue/360 + .10) % 1, .82, .52);
+    core.material.emissiveIntensity = .72 + Math.sin(t * 1.15) * .14 + sp * .2;
+    shell.material.opacity = .18 + Math.sin(t * .8 + .6) * .03;
+
+    camera.position.z = 9.1 - sp * 1.8 + Math.sin(t * .18) * .12;
+    camera.position.x = mxN * .22;
+    camera.position.y = myN * .18;
+    camera.lookAt(G.position.x * .36, G.position.y * .28, 0);
 
     renderer.render(scene, camera);
   }
@@ -916,23 +1079,50 @@ footer p{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;color:rgb
 ═════════════════════════════════════════════════════════ -->
 <script>
 (function(){
-  window.addEventListener('scroll', () => {
-    const sy = window.scrollY;
-    const hH = document.getElementById('hero').offsetHeight;
-    const p  = Math.min(sy / hH, 1);
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hero = document.getElementById('hero');
+  const heroText = document.querySelector('.hero-text');
+  const ln1  = document.querySelector('.ln1');
+  const ln2  = document.querySelector('.ln2');
+  const tag  = document.querySelector('.tag');
+  const role = document.querySelector('.hero-role');
+  const bio  = document.querySelector('.hero-bio');
+  const lnks = document.querySelector('.hero-links');
+  const hint = document.querySelector('.scroll-hint');
 
-    const ln1  = document.querySelector('.ln1');
-    const ln2  = document.querySelector('.ln2');
-    const role = document.querySelector('.hero-role');
-    const bio  = document.querySelector('.hero-bio');
-    const lnks = document.querySelector('.hero-links');
+  if(reducedMotion) return;
 
-    if(ln1) ln1.style.transform = `translateY(${-p*50}px)`;
-    if(ln2){ ln2.style.transform = `translateY(${p*26}px)`; ln2.style.opacity = 1 - p*1.5; }
-    if(role) role.style.transform = `translateY(${p*45}px)`;
-    if(bio)  bio.style.transform  = `translateY(${p*65}px)`;
-    if(lnks) lnks.style.transform = `translateY(${p*80}px)`;
-  }, {passive:true});
+  let introDone = false;
+  window.setTimeout(() => { introDone = true; }, 1050);
+
+  (function tick(){
+    const shared = window.__siteMotion;
+    const p = shared ? shared.hero : Math.min(window.scrollY / Math.max(hero.offsetHeight, 1), 1);
+    const mxN = shared ? (shared.mouseX / innerWidth - .5) * 2 : 0;
+    const myN = shared ? (shared.mouseY / innerHeight - .5) * 2 : 0;
+
+    if(heroText){
+      heroText.style.transform = `translate3d(${mxN * 8}px,${myN * 5 - p * 12}px,0)`;
+    }
+
+    if(introDone){
+      if(tag)  tag.style.transform  = `translate3d(${mxN * 4}px,${-p * 16}px,0)`;
+      if(ln1)  ln1.style.transform  = `translate3d(${mxN * 6}px,${-p * 42 - myN * 4}px,0)`;
+      if(ln2){
+        ln2.style.transform = `translate3d(${mxN * -4}px,${p * 18 + myN * 5}px,0)`;
+        ln2.style.opacity = Math.max(.08, 1 - p * 1.45);
+      }
+      if(role) role.style.transform = `translate3d(${mxN * 2}px,${p * 28}px,0)`;
+      if(bio)  bio.style.transform  = `translate3d(${mxN * 3}px,${p * 42}px,0)`;
+      if(lnks) lnks.style.transform = `translate3d(0,${p * 56}px,0)`;
+      if(hint){
+        hint.style.opacity = Math.max(0, 1 - p * 1.85);
+        hint.style.transform = `translate3d(${mxN * 5}px,${p * 24}px,0)`;
+      }
+    }
+
+    requestAnimationFrame(tick);
+  })();
 })();
 </script>
 
