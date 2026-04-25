@@ -274,7 +274,7 @@ section::before{
 }
 
 .sec-num{
-  font-family:var(--mono);font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;
+  font-family:var(--mono);font-size:.8rem;letter-spacing:.24em;text-transform:uppercase;
   color:rgba(var(--accent-rgb),.72);margin-bottom:1rem;
   display:flex;align-items:center;gap:.8rem;
 }
@@ -343,7 +343,7 @@ section::before{
   letter-spacing:-.01em;
 }
 .exp-role{
-  font-family:var(--mono);font-size:.82rem;letter-spacing:.15em;text-transform:uppercase;
+  font-family:var(--mono);font-size:.92rem;letter-spacing:.13em;text-transform:uppercase;
   color:var(--accent);margin-bottom:1rem;
 }
 .exp-desc{font-size:1.12rem;line-height:1.95;color:rgba(240,237,230,.62);max-width:58ch}
@@ -423,16 +423,20 @@ section::before{
 
 .proj-grid{
   display:grid;grid-template-columns:1fr 1fr;
-  gap:1px;background:rgba(120,195,255,.08);
-  border:1px solid rgba(120,195,255,.08);
-  border-radius:24px;
-  overflow:hidden;
+  gap:1.25rem;
 }
 .proj{
-  background:linear-gradient(180deg,rgba(10,13,28,.94),rgba(8,9,20,.92));padding:2.8rem;
+  background:linear-gradient(180deg,rgba(10,13,28,.96),rgba(8,9,20,.94));padding:2.5rem 2.4rem 2.2rem;
   position:relative;overflow:hidden;cursor:pointer;
-  transition:background .4s,transform .5s cubic-bezier(.22,1,.36,1),border-color .4s ease;
+  transition:background .4s,transform .45s cubic-bezier(.22,1,.36,1),border-color .4s ease,box-shadow .4s ease;
   backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:26px;
+  min-height:320px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  box-shadow:0 18px 48px rgba(0,0,0,.16);
 }
 .proj:nth-child(1){--proj-accent:#c9a96e;--proj-rgb:201,169,110}
 .proj:nth-child(2){--proj-accent:#78c3ff;--proj-rgb:120,195,255}
@@ -440,45 +444,96 @@ section::before{
 .proj:nth-child(4){--proj-accent:#f0a8bc;--proj-rgb:240,168,188}
 .proj::before{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(var(--proj-rgb),.14) 0%,transparent 65%);
-  opacity:0;transition:opacity .4s;pointer-events:none;
+  background:
+    radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(var(--proj-rgb),.12) 0%,transparent 62%),
+    linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));
+  opacity:.95;transition:opacity .4s;pointer-events:none;
+}
+.proj::after{
+  content:'';position:absolute;left:2.4rem;right:2.4rem;top:0;height:1px;
+  background:linear-gradient(90deg,rgba(var(--proj-rgb),0),rgba(var(--proj-rgb),.75),rgba(var(--proj-rgb),0));
+  opacity:.7;
 }
 .proj:hover::before{opacity:1}
-.proj:hover{background:linear-gradient(180deg,rgba(15,18,36,.98),rgba(10,12,26,.96));transform:translateY(-4px)}
+.proj:hover{
+  background:linear-gradient(180deg,rgba(15,18,36,.99),rgba(10,12,26,.97));
+  transform:translateY(-6px);
+  border-color:rgba(var(--proj-rgb),.18);
+  box-shadow:0 24px 64px rgba(0,0,0,.22);
+}
+
+.proj-top{
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  margin-bottom:1.35rem;
+  position:relative;z-index:1;
+}
 
 .proj-tag{
-  font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--proj-accent);margin-bottom:1.2rem;
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--proj-accent);
   display:flex;align-items:center;gap:.5rem;
 }
 .proj-tag::before{content:'';width:14px;height:1px;background:var(--proj-accent);flex-shrink:0}
 
+.proj-year{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(var(--proj-rgb),.82);
+  padding:.38rem .62rem;
+  border-radius:999px;
+  border:1px solid rgba(var(--proj-rgb),.16);
+  background:rgba(var(--proj-rgb),.08);
+  flex-shrink:0;
+}
+
+.proj-main{position:relative;z-index:1}
+
 /* Project title: Syne bold — consistent with exp-company, neither uses DM Serif */
 .proj-title{
   font-family:'Syne',sans-serif;
-  font-weight:700;font-size:1.34rem;line-height:1.28;
-  color:#fff;margin-bottom:1rem;letter-spacing:-.01em;
+  font-weight:700;font-size:1.42rem;line-height:1.24;
+  color:#fff;margin-bottom:.9rem;letter-spacing:-.01em;
   text-shadow:0 0 18px rgba(var(--proj-rgb),.08);
 }
-.proj-desc{font-size:1rem;line-height:1.88;color:rgba(240,237,230,.58);margin-bottom:1.65rem}
-.proj-stack{display:flex;flex-wrap:wrap;gap:.4rem}
+.proj-desc{
+  font-size:1.02rem;line-height:1.82;color:rgba(240,237,230,.62);
+  margin-bottom:1.8rem;
+  max-width:38ch;
+}
+.proj-foot{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;
+  position:relative;z-index:1;
+}
+.proj-stack{display:flex;flex-wrap:wrap;gap:.5rem}
 .chip{
   font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;
-  padding:.34rem .76rem;border:1px solid rgba(var(--proj-rgb),.14);
-  border-radius:999px;color:rgba(255,255,255,.44);
-  background:rgba(var(--proj-rgb),.06);
-  transition:border-color .3s,color .3s;
+  padding:.42rem .78rem;border:1px solid rgba(var(--proj-rgb),.14);
+  border-radius:999px;color:rgba(255,255,255,.56);
+  background:rgba(var(--proj-rgb),.07);
+  transition:border-color .3s,color .3s,background .3s ease,transform .3s ease;
 }
-.proj:hover .chip{border-color:rgba(var(--proj-rgb),.32);color:rgba(var(--proj-rgb),.9)}
+.proj:hover .chip{
+  border-color:rgba(var(--proj-rgb),.32);
+  color:rgba(var(--proj-rgb),.96);
+  background:rgba(var(--proj-rgb),.12);
+  transform:translateY(-1px);
+}
 
 .proj-arrow{
-  position:absolute;top:2.5rem;right:2.5rem;
-  font-size:1rem;opacity:.22;color:rgba(var(--proj-rgb),.82);
-  transform:rotate(-45deg);
-  transition:opacity .3s,transform .3s;
+  width:46px;height:46px;border-radius:50%;
+  display:grid;place-items:center;
+  font-size:1rem;opacity:.9;color:rgba(var(--proj-rgb),.9);
+  border:1px solid rgba(var(--proj-rgb),.16);
+  background:rgba(var(--proj-rgb),.08);
+  transform:translateY(0);
+  transition:opacity .3s,transform .3s,border-color .3s,background .3s;
   font-family:var(--mono);
+  flex-shrink:0;
 }
-.proj:hover .proj-arrow{opacity:.9;transform:rotate(-45deg) translate(3px,-3px)}
+.proj:hover .proj-arrow{
+  transform:translateY(-2px);
+  border-color:rgba(var(--proj-rgb),.32);
+  background:rgba(var(--proj-rgb),.14);
+}
 
 /* ── SKILLS ── */
 #skills{padding-top:8rem;padding-bottom:8rem}
@@ -511,7 +566,7 @@ section::before{
 }
 
 .skill-cat{
-  font-family:var(--mono);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;
   color:var(--skill-accent);margin-bottom:1.2rem;
   display:flex;align-items:center;gap:.45rem;
   position:relative;z-index:1;
@@ -741,7 +796,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
       <div class="exp-content">
         <div class="exp-company">ArchES Computing Systems</div>
         <div class="exp-role">Software Engineering Intern</div>
-        <div class="exp-desc">Developing ultra-low latency C++ infrastructure over TCP/UDP for real-time market data processing on FPGA — pushing hardware and software to the absolute edge of performance.</div>
+        <div class="exp-desc">Built ultra-low latency C++ and FPGA infrastructure for real-time market data over TCP/UDP.</div>
       </div>
       <div class="exp-visual exp-visual-donut" aria-hidden="true">
         <div class="exp-ornament"></div>
@@ -756,7 +811,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
       <div class="exp-content">
         <div class="exp-company">BMO — Bank of Montreal</div>
         <div class="exp-role">Software Engineering Intern</div>
-        <div class="exp-desc">Developed backend testing for Payment API services using JUnit + Mockito, reducing deployment time by <strong>7%</strong> through systematic test coverage and reliability engineering.</div>
+        <div class="exp-desc">Expanded Payment API test coverage with JUnit + Mockito, cutting deployment time by <strong>7%</strong>.</div>
       </div>
       <div class="exp-visual exp-visual-triangle" aria-hidden="true">
         <div class="exp-ornament"></div>
@@ -771,7 +826,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
       <div class="exp-content">
         <div class="exp-company">North P&amp;D Inc.</div>
         <div class="exp-role">Software Engineering Intern</div>
-        <div class="exp-desc">Built a Python + FastAPI backend microservice processing events with <strong>sub-120ms latency</strong>. Redis in-memory caching, indexing, and concurrency optimizations to hit strict performance targets.</div>
+        <div class="exp-desc">Built a Python + FastAPI microservice with <strong>sub-120ms latency</strong> using Redis caching and concurrency tuning.</div>
       </div>
       <div class="exp-visual exp-visual-split" aria-hidden="true">
         <div class="exp-ornament"></div>
@@ -786,7 +841,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
       <div class="exp-content">
         <div class="exp-company">NeuroTech Research — UofT</div>
         <div class="exp-role">Machine Learning Developer</div>
-        <div class="exp-desc">End-to-end ML pipeline for tremor detection from EEG and 3-axis accelerometer data using Python (MNE). Achieved <strong>90.6% classification accuracy</strong> on professional datasets via supervised learning.</div>
+        <div class="exp-desc">Built an EEG + accelerometer tremor-detection pipeline in Python (MNE) that reached <strong>90.6% accuracy</strong>.</div>
       </div>
       <div class="exp-visual exp-visual-diamond" aria-hidden="true">
         <div class="exp-ornament"></div>
@@ -804,57 +859,85 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
   <div class="proj-grid">
 
     <div class="proj r" style="transition-delay:.04s">
-      <div class="proj-tag">ML / Hardware · 2026</div>
-      <div class="proj-title">Probing CNN Activations for Epistemic Failure</div>
-      <div class="proj-desc">PyTorch CNN with global/N:M pruning (~70% sparsity), INT8 post-training quantization, and FPGA export. An auditor NN predicts classifier unreliability by analysing internal activation L1 norms.</div>
-      <div class="proj-stack">
-        <span class="chip">PyTorch</span>
-        <span class="chip">FPGA</span>
-        <span class="chip">INT8 Quant</span>
-        <span class="chip">N:M Pruning</span>
+      <div class="proj-top">
+        <div class="proj-tag">ML / Hardware</div>
+        <div class="proj-year">2026</div>
       </div>
-      <div class="proj-arrow">→</div>
+      <div class="proj-main">
+        <div class="proj-title">Probing CNN Activations for Epistemic Failure</div>
+        <div class="proj-desc">Pruned and quantized a PyTorch CNN for FPGA export, then trained an auditor model to flag unreliable predictions.</div>
+      </div>
+      <div class="proj-foot">
+        <div class="proj-stack">
+          <span class="chip">PyTorch</span>
+          <span class="chip">FPGA</span>
+          <span class="chip">INT8 Quant</span>
+          <span class="chip">N:M Pruning</span>
+        </div>
+        <div class="proj-arrow">→</div>
+      </div>
     </div>
 
     <div class="proj r" style="transition-delay:.08s">
-      <div class="proj-tag">Systems / GIS · C++</div>
-      <div class="proj-title">City-Scale GIS &amp; Route Optimization Engine</div>
-      <div class="proj-desc">C++ GIS engine built on OpenStreetMap data with interactive rendering and route computation at city scale. Optimized A* shortest-path for real courier routing scenarios.</div>
-      <div class="proj-stack">
-        <span class="chip">C++</span>
-        <span class="chip">OpenStreetMap API</span>
-        <span class="chip">A* Algorithm</span>
-        <span class="chip">Graphics</span>
+      <div class="proj-top">
+        <div class="proj-tag">Systems / GIS</div>
+        <div class="proj-year">C++</div>
       </div>
-      <div class="proj-arrow">→</div>
+      <div class="proj-main">
+        <div class="proj-title">City-Scale GIS &amp; Route Optimization Engine</div>
+        <div class="proj-desc">Built a city-scale C++ GIS engine on OpenStreetMap with interactive rendering and optimized A* routing.</div>
+      </div>
+      <div class="proj-foot">
+        <div class="proj-stack">
+          <span class="chip">C++</span>
+          <span class="chip">OpenStreetMap API</span>
+          <span class="chip">A* Algorithm</span>
+          <span class="chip">Graphics</span>
+        </div>
+        <div class="proj-arrow">→</div>
+      </div>
     </div>
 
     <div class="proj r" style="transition-delay:.12s">
-      <div class="proj-tag">FPGA / AI · Hardware</div>
-      <div class="proj-title">FPGA 3D Tilt Maze with RL Agent</div>
-      <div class="proj-desc">Real-time 3D tilt-controlled maze on DE1-SoC FPGA. Custom I2C for MPU accelerometer, VGA depth projection pipeline, and RL / DFS / Random AI agents for dynamic gameplay.</div>
-      <div class="proj-stack">
-        <span class="chip">DE1-SoC</span>
-        <span class="chip">Nios V</span>
-        <span class="chip">I2C IMU</span>
-        <span class="chip">VGA</span>
-        <span class="chip">Python</span>
-        <span class="chip">C</span>
+      <div class="proj-top">
+        <div class="proj-tag">FPGA / AI</div>
+        <div class="proj-year">Hardware</div>
       </div>
-      <div class="proj-arrow">→</div>
+      <div class="proj-main">
+        <div class="proj-title">FPGA 3D Tilt Maze with RL Agent</div>
+        <div class="proj-desc">Built a real-time 3D FPGA maze with custom I2C input, VGA graphics, and multiple AI control agents.</div>
+      </div>
+      <div class="proj-foot">
+        <div class="proj-stack">
+          <span class="chip">DE1-SoC</span>
+          <span class="chip">Nios V</span>
+          <span class="chip">I2C IMU</span>
+          <span class="chip">VGA</span>
+          <span class="chip">Python</span>
+          <span class="chip">C</span>
+        </div>
+        <div class="proj-arrow">→</div>
+      </div>
     </div>
 
     <div class="proj r" style="transition-delay:.16s">
-      <div class="proj-tag">Verilog / FPGA · RTL</div>
-      <div class="proj-title">Lane Runner — Real-Time Car Simulation</div>
-      <div class="proj-desc">Three-lane car simulation in Verilog with FSMs, PS/2 keyboard input, audio output, and a VGA graphics pipeline rendering live visuals at 60 Hz on Altera DE1-SoC.</div>
-      <div class="proj-stack">
-        <span class="chip">Verilog</span>
-        <span class="chip">Quartus</span>
-        <span class="chip">DE1-SoC</span>
-        <span class="chip">VGA FSM</span>
+      <div class="proj-top">
+        <div class="proj-tag">Verilog / FPGA</div>
+        <div class="proj-year">RTL</div>
       </div>
-      <div class="proj-arrow">→</div>
+      <div class="proj-main">
+        <div class="proj-title">Lane Runner — Real-Time Car Simulation</div>
+        <div class="proj-desc">Built a 60 Hz Verilog car simulation with FSMs, PS/2 input, audio, and a full VGA graphics pipeline.</div>
+      </div>
+      <div class="proj-foot">
+        <div class="proj-stack">
+          <span class="chip">Verilog</span>
+          <span class="chip">Quartus</span>
+          <span class="chip">DE1-SoC</span>
+          <span class="chip">VGA FSM</span>
+        </div>
+        <div class="proj-arrow">→</div>
+      </div>
     </div>
 
   </div>
