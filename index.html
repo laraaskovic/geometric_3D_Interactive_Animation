@@ -499,7 +499,7 @@ section::before{
   text-align:center;
 }
 #contact .sec-num{justify-content:center}
-#contact .sec-title{font-size:clamp(3rem,6.5vw,6rem)}
+#contact .sec-title{font-size:clamp(3rem,6.5vw,6rem);margin-bottom:2.4rem}
 
 .contact-sub{
   font-family:var(--mono);font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;
@@ -534,6 +534,8 @@ footer{
   padding:1.8rem 4.5rem;
   border-top:1px solid rgba(241,201,130,.08);
   display:flex;justify-content:space-between;align-items:center;
+  gap:1rem;
+  background:linear-gradient(180deg,rgba(10,10,18,0),rgba(10,10,18,.52));
 }
 footer p{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;color:rgba(241,201,130,.42)}
 .foot-links{display:flex;gap:2rem}
@@ -564,6 +566,7 @@ footer p{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;color:rgb
   .about-inner{grid-template-columns:1fr}
   .exp-item{grid-template-columns:1fr;gap:1rem}
   .scroll-hint{left:2rem}
+  footer{padding:1.5rem 2rem;flex-direction:column;align-items:flex-start}
 }
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
