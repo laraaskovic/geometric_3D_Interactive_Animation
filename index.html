@@ -316,7 +316,12 @@ section::before{
 .exp-meta{}
 .exp-date{
   font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;
-  color:var(--gold);margin-bottom:.4rem;
+  color:var(--accent);margin-bottom:.4rem;
+  display:inline-flex;align-items:center;
+  padding:.28rem .62rem;
+  border-radius:999px;
+  background:rgba(155,135,255,.1);
+  border:1px solid rgba(155,135,255,.14);
 }
 .exp-place{font-family:var(--mono);font-size:.72rem;color:var(--muted);line-height:1.5}
 
@@ -433,8 +438,8 @@ section::before{
 .about-inner{
   display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:start;
 }
-.about-text p{font-size:1rem;line-height:2;color:var(--muted);margin-bottom:1.4rem}
-.about-text .hl-text{color:var(--fg);font-weight:500}
+.about-text p{font-size:1rem;line-height:2;color:rgba(240,237,230,.56);margin-bottom:1.4rem}
+.about-text .hl-text{color:#ffdbe5;font-weight:500}
 
 .about-stats{
   display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2.5rem;
@@ -482,8 +487,9 @@ section::before{
 .about-gpa{
   display:inline-block;margin-top:1.2rem;
   font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;
-  padding:.3rem .85rem;border:1px solid rgba(94,204,154,.25);
-  color:var(--emerald);border-radius:3px;
+  padding:.38rem .9rem;border:1px solid rgba(240,168,188,.2);
+  color:#ffd8e3;border-radius:999px;
+  background:rgba(240,168,188,.08);
 }
 
 /* ── CONTACT ── */
