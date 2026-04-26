@@ -24,9 +24,8 @@
   --shadow:0 30px 90px rgba(0,0,0,.28);
   --mono:'Syne Mono',monospace;
   --sunset-p:0;
-  --beam-x:14%;
-  --beam-y:10%;
   --beam-shift:-72px;
+  --beam-scale:1.02;
 }
 
 html{font-size:16px;scroll-behavior:smooth}
@@ -42,30 +41,29 @@ body{
 body::before{
   content:'';position:fixed;inset:-12%;z-index:1;pointer-events:none;
   background:
-    linear-gradient(118deg,
-      rgba(255,233,194,0) 20%,
-      rgba(255,233,194,.12) 37%,
-      rgba(255,182,115,.24) 48%,
-      rgba(255,118,82,.18) 58%,
-      rgba(255,118,82,0) 74%
-    ),
-    linear-gradient(118deg,
-      rgba(255,245,226,0) 31%,
-      rgba(255,245,226,.14) 45%,
-      rgba(255,214,150,.34) 50%,
-      rgba(255,163,104,.14) 56%,
-      rgba(255,163,104,0) 68%
-    ),
-    radial-gradient(circle at var(--beam-x) var(--beam-y),rgba(255,222,164,.30),transparent 22%),
-    radial-gradient(circle at 78% 18%,rgba(255,170,120,.22),transparent 26%),
-    radial-gradient(circle at 64% 82%,rgba(255,120,90,.16),transparent 32%),
-    linear-gradient(180deg,rgba(120,44,30,.10) 0%,rgba(196,79,42,.16) 54%,rgba(255,183,126,.10) 100%),
     radial-gradient(circle at 16% 20%,rgba(140,199,209,.18),transparent 28%),
     radial-gradient(circle at 82% 14%,rgba(211,154,98,.16),transparent 24%),
     radial-gradient(circle at 52% 76%,rgba(120,199,173,.12),transparent 34%),
     linear-gradient(180deg,#07161d 0%,#081b23 38%,#061116 100%);
-  opacity:calc(.78 + var(--sunset-p) * .36);
-  transform:translate3d(var(--beam-shift),calc(var(--scroll-p,0) * -34px),0) scale(1.04);
+  opacity:.96;
+  transform:translate3d(0,calc(var(--scroll-p,0) * -18px),0) scale(1.02);
+}
+
+.sunset-beam{
+  position:fixed;inset:-16%;z-index:2;pointer-events:none;
+  background:
+    linear-gradient(118deg,
+      rgba(255,240,214,0) 24%,
+      rgba(255,240,214,.11) 41%,
+      rgba(255,197,132,.36) 50%,
+      rgba(255,122,84,.22) 58%,
+      rgba(255,122,84,0) 72%
+    ),
+    radial-gradient(circle at 14% 12%,rgba(255,226,176,.34),transparent 20%),
+    radial-gradient(circle at 76% 18%,rgba(255,169,118,.16),transparent 24%),
+    linear-gradient(180deg,rgba(118,42,29,.02) 0%,rgba(194,78,42,.16) 56%,rgba(255,183,126,.18) 100%);
+  opacity:calc(.02 + var(--sunset-p) * .96);
+  transform:translate3d(var(--beam-shift),calc(var(--scroll-p,0) * -26px),0) scale(var(--beam-scale));
 }
 
 /* ── CURSOR ── */
@@ -762,6 +760,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
 
 <div id="cDot"></div>
 <div id="cRing"></div>
+<div class="sunset-beam"></div>
 <canvas id="c"></canvas>
 
 <nav>
@@ -1238,9 +1237,8 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
 
     root.style.setProperty('--scroll-p', sp.toFixed(4));
     root.style.setProperty('--sunset-p', sunset.toFixed(4));
-    root.style.setProperty('--beam-x', `${lerp(14, 82, sunset).toFixed(2)}%`);
-    root.style.setProperty('--beam-y', `${lerp(10, 34, sunset).toFixed(2)}%`);
     root.style.setProperty('--beam-shift', `${lerp(-72, 58, sunset).toFixed(2)}px`);
+    root.style.setProperty('--beam-scale', (1.02 + sunset * .07).toFixed(4));
     document.body.classList.toggle('scrolled', sp > .03);
 
     const si = Math.min(sp * (bgRamp.length - 1), bgRamp.length - 2);
