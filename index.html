@@ -1199,12 +1199,12 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
     {r:.022, g:.020, b:.060},  // contact  — back to indigo
   ];
   const bgRamp = [
-    {r:.018, g:.060, b:.084},
-    {r:.032, g:.070, b:.116},
-    {r:.066, g:.082, b:.110},
-    {r:.138, g:.084, b:.076},
-    {r:.242, g:.110, b:.078},
-    {r:.338, g:.152, b:.094},
+    {r:.010, g:.038, b:.066},
+    {r:.028, g:.046, b:.108},
+    {r:.092, g:.066, b:.124},
+    {r:.214, g:.090, b:.086},
+    {r:.392, g:.132, b:.078},
+    {r:.640, g:.238, b:.102},
   ];
 
   function lerp(a,b,t){ return a + (b-a)*t }
@@ -1246,7 +1246,13 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
     const si = Math.min(sp * (bgRamp.length - 1), bgRamp.length - 2);
     const sIdx = Math.floor(si);
     const bg = lerpC(bgRamp[sIdx], bgRamp[sIdx + 1], smoothstep(si - sIdx));
+    renderer.toneMappingExposure = lerp(1.02, 1.24, sunset);
     renderer.setClearColor(new THREE.Color(bg.r, bg.g, bg.b), 1);
+    scene.fog.color.setRGB(
+      lerp(bg.r, Math.min(bg.r + .18, 1), sunset * .32),
+      lerp(bg.g, Math.max(bg.g - .015, 0), sunset * .18),
+      lerp(bg.b, Math.max(bg.b - .06, 0), sunset * .42)
+    );
 
     const path = sp * (beats.length - 1);
     const idx = Math.min(Math.floor(path), beats.length - 2);
@@ -1274,20 +1280,25 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
     lights[0].obj.position.y = Math.cos(lt * .8) * 5.8 + myN * 1.7;
     lights[1].obj.position.x = Math.cos(lt * .78) * 5.8;
     lights[1].obj.position.y = Math.sin(lt * .62) * 4.8;
-    lights[2].obj.position.x = Math.sin(lt * .54 + 1.5) * 4.8 + sp * 1.8;
     lights[2].obj.position.z = Math.cos(lt * .38) * 4.1 + 5;
-    lights[0].obj.intensity = 4.8 - sunset * 1.6 + Math.sin(t * .7) * .45;
-    lights[1].obj.intensity = 3.1 + sunset * .5 + Math.cos(t * .55) * .32;
-    lights[2].obj.intensity = 2.9 + sunset * 1.55 + Math.sin(t * .48 + .6) * .28;
+    lights[0].obj.intensity = 4.9 - sunset * 2.2 + Math.sin(t * .7) * .42;
+    lights[1].obj.intensity = 3.0 + sunset * .8 + Math.cos(t * .55) * .3;
+    lights[2].obj.intensity = 3.0 + sunset * 2.3 + Math.sin(t * .48 + .6) * .26;
+    lights[2].obj.position.y = lerp(-6.2, 2.8, sunset) + Math.sin(lt * .44) * 1.2;
+    lights[2].obj.position.x = Math.sin(lt * .54 + 1.5) * 4.8 + sp * 1.8 + sunset * 2.2;
 
-    const coolHue = lerp(.58, .08, sunset);
-    const seaHue = lerp(.43, .11, sunset);
-    const warmHue = lerp(.08, .02, sunset);
-    lights[0].obj.color.setHSL(coolHue, lerp(.66, .72, sunset), lerp(.64, .68, sunset));
-    lights[1].obj.color.setHSL(seaHue, lerp(.42, .64, sunset), lerp(.58, .62, sunset));
-    lights[2].obj.color.setHSL(warmHue, lerp(.68, .82, sunset), lerp(.58, .66, sunset));
-    core.material.emissiveIntensity = .72 + Math.sin(t * 1.15) * .14 + sunset * .34;
-    shell.material.opacity = .16 + Math.sin(t * .8 + .6) * .03 + sunset * .05;
+    const coolHue = lerp(.58, .06, sunset);
+    const seaHue = lerp(.43, .09, sunset);
+    const warmHue = lerp(.08, .015, sunset);
+    lights[0].obj.color.setHSL(coolHue, lerp(.66, .78, sunset), lerp(.64, .7, sunset));
+    lights[1].obj.color.setHSL(seaHue, lerp(.42, .7, sunset), lerp(.58, .64, sunset));
+    lights[2].obj.color.setHSL(warmHue, lerp(.68, .88, sunset), lerp(.58, .7, sunset));
+    shell.material.specular.setHSL(lerp(.56, .075, sunset), lerp(.34, .74, sunset), lerp(.48, .72, sunset));
+    core.material.color.setHSL(lerp(.58, .055, sunset), lerp(.34, .66, sunset), lerp(.12, .28, sunset));
+    core.material.specular.setHSL(lerp(.66, .035, sunset), lerp(.58, .88, sunset), lerp(.56, .72, sunset));
+    core.material.emissive.setHSL(lerp(.53, .028, sunset), lerp(.66, .92, sunset), lerp(.12, .3, sunset));
+    core.material.emissiveIntensity = .78 + Math.sin(t * 1.15) * .14 + sunset * .62;
+    shell.material.opacity = .16 + Math.sin(t * .8 + .6) * .03 + sunset * .08;
 
     camera.position.z = 9.1 - sp * 1.8 + Math.sin(t * .18) * .12;
     camera.position.x = mxN * .22;
