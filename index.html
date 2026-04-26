@@ -1097,7 +1097,8 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
   camera.position.set(0, 0, 9);
 
   // ── LIGHTS ──
-  scene.add(new THREE.AmbientLight(0xffffff, 0.025));
+  const ambient = new THREE.AmbientLight(0xffffff, 0.025);
+  scene.add(ambient);
 
   const lights = [
     {c:0x6f8fd8, i:5,   p:[ 6,  5,  4]},
@@ -1220,6 +1221,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
     const sIdx = Math.floor(si);
     const bg = lerpC(bgRamp[sIdx], bgRamp[sIdx + 1], smoothstep(si - sIdx));
     renderer.setClearColor(new THREE.Color(bg.r, bg.g, bg.b), 1);
+    const lightShift = smoothstep(clamp((sp - .06) / .82, 0, 1));
 
     const path = sp * (beats.length - 1);
     const idx = Math.min(Math.floor(path), beats.length - 2);
@@ -1247,21 +1249,25 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
     lights[0].obj.position.y = Math.cos(lt * .8) * 5.8 + myN * 1.7;
     lights[1].obj.position.x = Math.cos(lt * .78) * 5.8;
     lights[1].obj.position.y = Math.sin(lt * .62) * 4.8;
-    lights[2].obj.position.x = Math.sin(lt * .54 + 1.5) * 4.8 + sp * 1.8;
+    lights[2].obj.position.x = Math.sin(lt * .54 + 1.5) * 4.8 + sp * 1.8 + lightShift * 1.4;
+    lights[2].obj.position.y = lerp(-5.8, -1.2, lightShift) + Math.sin(lt * .44) * .8;
     lights[2].obj.position.z = Math.cos(lt * .38) * 4.1 + 5;
-    lights[0].obj.intensity = 4.6 + Math.sin(t * .7) * .5;
-    lights[1].obj.intensity = 3.2 + Math.cos(t * .55) * .35;
-    lights[2].obj.intensity = 2.8 + Math.sin(t * .48 + .6) * .3;
+    ambient.intensity = lerp(.025, .055, lightShift);
+    lights[0].obj.intensity = lerp(4.8, 2.9, lightShift) + Math.sin(t * .7) * .42;
+    lights[1].obj.intensity = lerp(3.1, 4.0, lightShift) + Math.cos(t * .55) * .3;
+    lights[2].obj.intensity = lerp(2.7, 4.7, lightShift) + Math.sin(t * .48 + .6) * .24;
 
-    const hueShift = smoothstep(sp);
-    const coolHue = lerp(.60, .53, hueShift);
-    const seaHue = lerp(.43, .36, hueShift);
-    const warmHue = lerp(.08, .04, hueShift);
-    lights[0].obj.color.setHSL(coolHue, .66, .64);
-    lights[1].obj.color.setHSL(seaHue, .42, .58);
-    lights[2].obj.color.setHSL(warmHue, .68, .58);
-    core.material.emissiveIntensity = .72 + Math.sin(t * 1.15) * .14 + sp * .2;
-    shell.material.opacity = .18 + Math.sin(t * .8 + .6) * .03;
+    const coolHue = lerp(.59, .11, lightShift);
+    const seaHue = lerp(.43, .08, lightShift);
+    const warmHue = lerp(.08, .03, lightShift);
+    lights[0].obj.color.setHSL(coolHue, lerp(.64, .8, lightShift), lerp(.62, .69, lightShift));
+    lights[1].obj.color.setHSL(seaHue, lerp(.44, .72, lightShift), lerp(.58, .66, lightShift));
+    lights[2].obj.color.setHSL(warmHue, lerp(.66, .9, lightShift), lerp(.58, .71, lightShift));
+    shell.material.specular.setHSL(lerp(.56, .09, lightShift), lerp(.3, .72, lightShift), lerp(.5, .7, lightShift));
+    core.material.specular.setHSL(lerp(.08, .03, lightShift), lerp(.62, .9, lightShift), lerp(.56, .74, lightShift));
+    core.material.emissive.setHSL(lerp(.53, .03, lightShift), lerp(.56, .9, lightShift), lerp(.12, .28, lightShift));
+    core.material.emissiveIntensity = .72 + Math.sin(t * 1.15) * .12 + lightShift * .34;
+    shell.material.opacity = .18 + Math.sin(t * .8 + .6) * .03 + lightShift * .04;
 
     camera.position.z = 9.1 - sp * 1.8 + Math.sin(t * .18) * .12;
     camera.position.x = mxN * .22;
