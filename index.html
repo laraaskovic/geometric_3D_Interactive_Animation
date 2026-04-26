@@ -23,9 +23,6 @@
   --line:rgba(255,255,255,.08);
   --shadow:0 30px 90px rgba(0,0,0,.28);
   --mono:'Syne Mono',monospace;
-  --sunset-p:0;
-  --beam-shift:-72px;
-  --beam-scale:1.02;
 }
 
 html{font-size:16px;scroll-behavior:smooth}
@@ -45,25 +42,8 @@ body::before{
     radial-gradient(circle at 82% 14%,rgba(211,154,98,.16),transparent 24%),
     radial-gradient(circle at 52% 76%,rgba(120,199,173,.12),transparent 34%),
     linear-gradient(180deg,#07161d 0%,#081b23 38%,#061116 100%);
-  opacity:.96;
-  transform:translate3d(0,calc(var(--scroll-p,0) * -18px),0) scale(1.02);
-}
-
-.sunset-beam{
-  position:fixed;inset:-16%;z-index:2;pointer-events:none;
-  background:
-    linear-gradient(118deg,
-      rgba(255,240,214,0) 24%,
-      rgba(255,240,214,.11) 41%,
-      rgba(255,197,132,.36) 50%,
-      rgba(255,122,84,.22) 58%,
-      rgba(255,122,84,0) 72%
-    ),
-    radial-gradient(circle at 14% 12%,rgba(255,226,176,.34),transparent 20%),
-    radial-gradient(circle at 76% 18%,rgba(255,169,118,.16),transparent 24%),
-    linear-gradient(180deg,rgba(118,42,29,.02) 0%,rgba(194,78,42,.16) 56%,rgba(255,183,126,.18) 100%);
-  opacity:calc(.02 + var(--sunset-p) * .96);
-  transform:translate3d(var(--beam-shift),calc(var(--scroll-p,0) * -26px),0) scale(var(--beam-scale));
+  opacity:.9;
+  transform:translate3d(0,calc(var(--scroll-p,0) * -40px),0) scale(1.02);
 }
 
 /* ── CURSOR ── */
@@ -760,7 +740,6 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
 
 <div id="cDot"></div>
 <div id="cRing"></div>
-<div class="sunset-beam"></div>
 <canvas id="c"></canvas>
 
 <nav>
@@ -1198,12 +1177,12 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
     {r:.022, g:.020, b:.060},  // contact  — back to indigo
   ];
   const bgRamp = [
-    {r:.010, g:.038, b:.066},
-    {r:.028, g:.046, b:.108},
-    {r:.092, g:.066, b:.124},
-    {r:.214, g:.090, b:.086},
-    {r:.392, g:.132, b:.078},
-    {r:.640, g:.238, b:.102},
+    {r:.024, g:.086, b:.112},
+    {r:.034, g:.066, b:.128},
+    {r:.018, g:.094, b:.102},
+    {r:.030, g:.084, b:.068},
+    {r:.058, g:.050, b:.052},
+    {r:.024, g:.086, b:.112},
   ];
 
   function lerp(a,b,t){ return a + (b-a)*t }
@@ -1233,24 +1212,14 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
     const sp = motion.scroll;
     const mxN = (motion.mouseX / innerWidth - .5) * 2;
     const myN = (motion.mouseY / innerHeight - .5) * 2;
-    const sunset = smoothstep(clamp((sp - .03) / .9, 0, 1));
 
     root.style.setProperty('--scroll-p', sp.toFixed(4));
-    root.style.setProperty('--sunset-p', sunset.toFixed(4));
-    root.style.setProperty('--beam-shift', `${lerp(-72, 58, sunset).toFixed(2)}px`);
-    root.style.setProperty('--beam-scale', (1.02 + sunset * .07).toFixed(4));
     document.body.classList.toggle('scrolled', sp > .03);
 
     const si = Math.min(sp * (bgRamp.length - 1), bgRamp.length - 2);
     const sIdx = Math.floor(si);
     const bg = lerpC(bgRamp[sIdx], bgRamp[sIdx + 1], smoothstep(si - sIdx));
-    renderer.toneMappingExposure = lerp(1.02, 1.24, sunset);
     renderer.setClearColor(new THREE.Color(bg.r, bg.g, bg.b), 1);
-    scene.fog.color.setRGB(
-      lerp(bg.r, Math.min(bg.r + .18, 1), sunset * .32),
-      lerp(bg.g, Math.max(bg.g - .015, 0), sunset * .18),
-      lerp(bg.b, Math.max(bg.b - .06, 0), sunset * .42)
-    );
 
     const path = sp * (beats.length - 1);
     const idx = Math.min(Math.floor(path), beats.length - 2);
@@ -1278,25 +1247,21 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
     lights[0].obj.position.y = Math.cos(lt * .8) * 5.8 + myN * 1.7;
     lights[1].obj.position.x = Math.cos(lt * .78) * 5.8;
     lights[1].obj.position.y = Math.sin(lt * .62) * 4.8;
+    lights[2].obj.position.x = Math.sin(lt * .54 + 1.5) * 4.8 + sp * 1.8;
     lights[2].obj.position.z = Math.cos(lt * .38) * 4.1 + 5;
-    lights[0].obj.intensity = 4.9 - sunset * 2.2 + Math.sin(t * .7) * .42;
-    lights[1].obj.intensity = 3.0 + sunset * .8 + Math.cos(t * .55) * .3;
-    lights[2].obj.intensity = 3.0 + sunset * 2.3 + Math.sin(t * .48 + .6) * .26;
-    lights[2].obj.position.y = lerp(-6.2, 2.8, sunset) + Math.sin(lt * .44) * 1.2;
-    lights[2].obj.position.x = Math.sin(lt * .54 + 1.5) * 4.8 + sp * 1.8 + sunset * 2.2;
+    lights[0].obj.intensity = 4.6 + Math.sin(t * .7) * .5;
+    lights[1].obj.intensity = 3.2 + Math.cos(t * .55) * .35;
+    lights[2].obj.intensity = 2.8 + Math.sin(t * .48 + .6) * .3;
 
-    const coolHue = lerp(.58, .06, sunset);
-    const seaHue = lerp(.43, .09, sunset);
-    const warmHue = lerp(.08, .015, sunset);
-    lights[0].obj.color.setHSL(coolHue, lerp(.66, .78, sunset), lerp(.64, .7, sunset));
-    lights[1].obj.color.setHSL(seaHue, lerp(.42, .7, sunset), lerp(.58, .64, sunset));
-    lights[2].obj.color.setHSL(warmHue, lerp(.68, .88, sunset), lerp(.58, .7, sunset));
-    shell.material.specular.setHSL(lerp(.56, .075, sunset), lerp(.34, .74, sunset), lerp(.48, .72, sunset));
-    core.material.color.setHSL(lerp(.58, .055, sunset), lerp(.34, .66, sunset), lerp(.12, .28, sunset));
-    core.material.specular.setHSL(lerp(.66, .035, sunset), lerp(.58, .88, sunset), lerp(.56, .72, sunset));
-    core.material.emissive.setHSL(lerp(.53, .028, sunset), lerp(.66, .92, sunset), lerp(.12, .3, sunset));
-    core.material.emissiveIntensity = .78 + Math.sin(t * 1.15) * .14 + sunset * .62;
-    shell.material.opacity = .16 + Math.sin(t * .8 + .6) * .03 + sunset * .08;
+    const hueShift = smoothstep(sp);
+    const coolHue = lerp(.60, .53, hueShift);
+    const seaHue = lerp(.43, .36, hueShift);
+    const warmHue = lerp(.08, .04, hueShift);
+    lights[0].obj.color.setHSL(coolHue, .66, .64);
+    lights[1].obj.color.setHSL(seaHue, .42, .58);
+    lights[2].obj.color.setHSL(warmHue, .68, .58);
+    core.material.emissiveIntensity = .72 + Math.sin(t * 1.15) * .14 + sp * .2;
+    shell.material.opacity = .18 + Math.sin(t * .8 + .6) * .03;
 
     camera.position.z = 9.1 - sp * 1.8 + Math.sin(t * .18) * .12;
     camera.position.x = mxN * .22;
