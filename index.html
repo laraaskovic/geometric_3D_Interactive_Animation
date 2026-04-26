@@ -1340,7 +1340,6 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
   const heroText = document.querySelector('.hero-text');
   const ln1  = document.querySelector('.ln1');
   const ln2  = document.querySelector('.ln2');
-  const tag  = document.querySelector('.tag');
   const role = document.querySelector('.hero-role');
   const bio  = document.querySelector('.hero-bio');
   const lnks = document.querySelector('.hero-links');
@@ -1362,7 +1361,6 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:rgb
     }
 
     if(introDone){
-      if(tag)  tag.style.transform  = `translate3d(${mxN * 4}px,${-p * 16}px,0)`;
       if(ln1)  ln1.style.transform  = `translate3d(${mxN * 6}px,${-p * 42 - myN * 4}px,0)`;
       if(ln2){
         ln2.style.transform = `translate3d(${mxN * -4}px,${p * 18 + myN * 5}px,0)`;
