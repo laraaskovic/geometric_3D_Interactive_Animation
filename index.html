@@ -10,17 +10,17 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
 :root{
-  --bg:#06050f;
-  --fg:#f0ede6;
-  --muted:rgba(240,237,230,0.38);
-  --gold:#c9a96e;
-  --violet:#9b72cf;
-  --emerald:#5ecc9a;
-  --ice:#a0c4e8;
-  --rose:#e8a0b0;
-  --panel:rgba(9,11,24,.52);
-  --panel-strong:rgba(13,16,34,.8);
-  --line:rgba(255,255,255,.07);
+  --bg:#07161d;
+  --fg:#eef4f1;
+  --muted:rgba(238,244,241,0.42);
+  --gold:#d39a62;
+  --violet:#6f8fd8;
+  --emerald:#78c7ad;
+  --ice:#8cc7d1;
+  --rose:#e08b73;
+  --panel:rgba(8,18,24,.56);
+  --panel-strong:rgba(10,24,32,.82);
+  --line:rgba(255,255,255,.08);
   --shadow:0 30px 90px rgba(0,0,0,.28);
   --mono:'Syne Mono',monospace;
 }
@@ -38,10 +38,10 @@ body{
 body::before{
   content:'';position:fixed;inset:-12%;z-index:1;pointer-events:none;
   background:
-    radial-gradient(circle at 18% 18%,rgba(160,196,232,.16),transparent 28%),
-    radial-gradient(circle at 82% 16%,rgba(201,169,110,.16),transparent 24%),
-    radial-gradient(circle at 50% 74%,rgba(155,114,207,.14),transparent 36%),
-    linear-gradient(180deg,#070610 0%,#080813 38%,#070913 100%);
+    radial-gradient(circle at 16% 20%,rgba(140,199,209,.18),transparent 28%),
+    radial-gradient(circle at 82% 14%,rgba(211,154,98,.16),transparent 24%),
+    radial-gradient(circle at 52% 76%,rgba(120,199,173,.12),transparent 34%),
+    linear-gradient(180deg,#07161d 0%,#081b23 38%,#061116 100%);
   opacity:.9;
   transform:translate3d(0,calc(var(--scroll-p,0) * -40px),0) scale(1.02);
 }
@@ -75,16 +75,16 @@ nav{
   position:fixed;top:0;left:0;right:0;z-index:200;
   padding:2.15rem 4.5rem 1.8rem;
   display:flex;justify-content:space-between;align-items:center;
-  background:linear-gradient(to bottom,rgba(6,5,15,.34),rgba(6,5,15,0));
+  background:linear-gradient(to bottom,rgba(7,22,29,.48),rgba(7,22,29,0));
   transition:padding .45s cubic-bezier(.22,1,.36,1),background .45s ease,backdrop-filter .45s ease,border-color .45s ease;
   border-bottom:1px solid transparent;
   gap:1.5rem;
 }
 body.scrolled nav{
   padding:1.15rem 4.5rem 1rem;
-  background:linear-gradient(180deg,rgba(11,12,26,.88),rgba(11,12,26,.64));
+  background:linear-gradient(180deg,rgba(8,22,29,.9),rgba(8,22,29,.66));
   backdrop-filter:blur(18px);
-  border-bottom-color:rgba(201,169,110,.12);
+  border-bottom-color:rgba(211,154,98,.14);
 }
 .logo{
   font-family:'DM Serif Display',serif;font-style:italic;
