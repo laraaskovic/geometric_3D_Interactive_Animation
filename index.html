@@ -1229,18 +1229,18 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
       <span class="theme-swatch" style="background:#c79a3b"></span>
     </span>
   </button>
-  <button type="button" class="theme-option" data-theme-choice="neon-noir" aria-label="Neon Noir theme" title="Neon Noir">
-    <span class="theme-swatches" aria-hidden="true">
-      <span class="theme-swatch" style="background:#07070c"></span>
-      <span class="theme-swatch" style="background:#ff4fc4"></span>
-      <span class="theme-swatch" style="background:#77d8ff"></span>
-    </span>
-  </button>
   <button type="button" class="theme-option" data-theme-choice="funky-flora" aria-label="Funky Flora theme" title="Funky Flora">
     <span class="theme-swatches" aria-hidden="true">
       <span class="theme-swatch" style="background:#0a1511"></span>
       <span class="theme-swatch" style="background:#ff5db1"></span>
       <span class="theme-swatch" style="background:#7cff72"></span>
+    </span>
+  </button>
+  <button type="button" class="theme-option" data-theme-choice="neon-noir" aria-label="Neon Noir theme" title="Neon Noir">
+    <span class="theme-swatches" aria-hidden="true">
+      <span class="theme-swatch" style="background:#07070c"></span>
+      <span class="theme-swatch" style="background:#ff4fc4"></span>
+      <span class="theme-swatch" style="background:#77d8ff"></span>
     </span>
   </button>
 </aside>
@@ -1660,6 +1660,25 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     return geo;
   }
 
+  function makeHeartGeometry(scale, depth){
+    const shape = new THREE.Shape();
+    shape.moveTo(0, -2.6 * scale);
+    shape.bezierCurveTo(-3.2 * scale, -5.0 * scale, -7.2 * scale, -1.4 * scale, -6.6 * scale, 2.3 * scale);
+    shape.bezierCurveTo(-6.0 * scale, 5.4 * scale, -2.6 * scale, 7.2 * scale, 0, 8.6 * scale);
+    shape.bezierCurveTo(2.6 * scale, 7.2 * scale, 6.0 * scale, 5.4 * scale, 6.6 * scale, 2.3 * scale);
+    shape.bezierCurveTo(7.2 * scale, -1.4 * scale, 3.2 * scale, -5.0 * scale, 0, -2.6 * scale);
+    const geo = new THREE.ExtrudeGeometry(shape, {
+      depth,
+      bevelEnabled:true,
+      bevelSegments:3,
+      steps:1,
+      bevelSize:0.34 * scale,
+      bevelThickness:depth * 0.18
+    });
+    geo.center();
+    return geo;
+  }
+
   function makeGeometry(kind){
     switch(kind){
       case 'donut':
@@ -1672,6 +1691,8 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
         return new THREE.TorusKnotGeometry(2.68, 0.52, 360, 36, 5, 9);
       case 'star':
         return makeStarGeometry(3.35, 1.48, 1.05);
+      case 'heart':
+        return makeHeartGeometry(0.46, 1.05);
       case 'gem':
         return new THREE.IcosahedronGeometry(3.65, 0);
       case 'orb':
@@ -1692,6 +1713,8 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
         return new THREE.TorusKnotGeometry(1.8, 0.16, 220, 16, 3, 7);
       case 'shell-star':
         return makeStarGeometry(2.2, 0.94, 0.5);
+      case 'shell-heart':
+        return makeHeartGeometry(0.3, 0.44);
       default:
         return new THREE.OctahedronGeometry(4.4, 0);
     }
@@ -1826,8 +1849,8 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     },
     'neon-noir': {
       shape:{
-        outer:'gem',
-        shell:'shell-gem',
+        outer:'heart',
+        shell:'shell-heart',
         core:'core-prism',
         outerMaterial:{
           color:0x0d1020,
@@ -1840,15 +1863,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
         wireColor:0xffc6ec,
         wireOpacity:0.07,
         edgeColor:0x6fe4ff,
-        edgeOpacity:0.24,
-        stripes:{
-          outerRadius:2.55,
-          innerRadius:1.75,
-          color:0xff73d2,
-          opacity:0.2,
-          thickness:0.045,
-          offsets:[-0.22, 0.22]
-        }
+        edgeOpacity:0.24
       },
       accentLight:{enabled:false},
       bgRamp:[
