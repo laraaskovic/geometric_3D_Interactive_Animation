@@ -1518,42 +1518,128 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
   const G = new THREE.Group();
   scene.add(G);
 
-  // Outer octahedron - large
-  const octGeo  = new THREE.OctahedronGeometry(4.4, 0);
   const octMat  = new THREE.MeshPhongMaterial({
     color:0x091823, specular:0xffffff, shininess:500,
     transparent:true, opacity:0.76, side:THREE.DoubleSide,
   });
-  const oct = new THREE.Mesh(octGeo, octMat);
-  G.add(oct);
-
-  // Wireframe shell on the outer oct
-  oct.add(new THREE.Mesh(octGeo,
-    new THREE.MeshBasicMaterial({color:0xffffff, wireframe:true, transparent:true, opacity:0.035})
-  ));
-  oct.add(new THREE.LineSegments(
-    new THREE.EdgesGeometry(octGeo),
-    new THREE.LineBasicMaterial({color:0xd7ad80, transparent:true, opacity:0.12})
-  ));
-
-  // Mid translucent shell
-  const shellGeo = new THREE.OctahedronGeometry(2.75, 0);
+  const wireMat = new THREE.MeshBasicMaterial({color:0xffffff, wireframe:true, transparent:true, opacity:0.035});
+  const edgeMat = new THREE.LineBasicMaterial({color:0xd7ad80, transparent:true, opacity:0.12});
   const shellMat = new THREE.MeshPhongMaterial({
     color:0x0b2430, specular:0x8cc7d1, shininess:200,
     transparent:true, opacity:0.22, side:THREE.DoubleSide,
   });
-  const shell = new THREE.Mesh(shellGeo, shellMat);
-  oct.add(shell);
-
-  // Inner glowing core
-  const coreGeo = new THREE.IcosahedronGeometry(2.0, 0);
   const coreMat = new THREE.MeshPhongMaterial({
     color:0x162630, specular:0xd39a62, shininess:600,
     emissive:0x14343f, emissiveIntensity:.8,
     transparent:true, opacity:0.65,
   });
-  const core = new THREE.Mesh(coreGeo, coreMat);
-  oct.add(core);
+  const stripeMat = new THREE.MeshBasicMaterial({
+    color:0xffffff, transparent:true, opacity:0.12, side:THREE.DoubleSide
+  });
+
+  let oct = null;
+  let shell = null;
+  let core = null;
+
+  function makeGeometry(kind){
+    switch(kind){
+      case 'donut':
+        return new THREE.TorusGeometry(3.45, 0.82, 42, 128);
+      case 'gem':
+        return new THREE.IcosahedronGeometry(3.65, 0);
+      case 'orb':
+        return new THREE.SphereGeometry(3.45, 24, 24);
+      case 'inner-donut':
+        return new THREE.TorusKnotGeometry(1.45, 0.36, 132, 18);
+      case 'core-orb':
+        return new THREE.IcosahedronGeometry(1.65, 1);
+      case 'core-prism':
+        return new THREE.OctahedronGeometry(1.85, 0);
+      case 'shell-gem':
+        return new THREE.IcosahedronGeometry(2.35, 0);
+      case 'shell-orb':
+        return new THREE.SphereGeometry(2.55, 18, 18);
+      default:
+        return new THREE.OctahedronGeometry(4.4, 0);
+    }
+  }
+
+  function clearGroup(node){
+    while(node.children.length){
+      const child = node.children.pop();
+      clearGroup(child);
+      if(child.geometry) child.geometry.dispose();
+      node.remove(child);
+    }
+  }
+
+  function addStripeBands(target, radius, options = {}){
+    const offsets = options.offsets || [-0.95, 0, 0.95];
+    const thickness = options.thickness || 0.09;
+    const color = options.color || 0xffffff;
+    const opacity = options.opacity ?? 0.12;
+    offsets.forEach((offset, idx) => {
+      const band = new THREE.Mesh(
+        new THREE.TorusGeometry(radius, thickness, 12, 72),
+        stripeMat.clone()
+      );
+      band.material.color.setHex(color);
+      band.material.opacity = opacity;
+      band.rotation.x = Math.PI / 2;
+      band.rotation.y = idx * 0.45;
+      band.position.z = offset;
+      target.add(band);
+    });
+  }
+
+  function buildShape(shape){
+    if(oct){
+      clearGroup(oct);
+      if(oct.geometry) oct.geometry.dispose();
+      G.remove(oct);
+    }
+
+    const outerGeo = makeGeometry(shape.outer);
+    oct = new THREE.Mesh(outerGeo, octMat);
+    oct.material = oct.material.clone();
+    if(shape.outerMaterial){
+      if(shape.outerMaterial.color !== undefined) oct.material.color.setHex(shape.outerMaterial.color);
+      if(shape.outerMaterial.specular !== undefined) oct.material.specular.setHex(shape.outerMaterial.specular);
+      if(shape.outerMaterial.opacity !== undefined) oct.material.opacity = shape.outerMaterial.opacity;
+      if(shape.outerMaterial.shininess !== undefined) oct.material.shininess = shape.outerMaterial.shininess;
+      if(shape.outerMaterial.emissive !== undefined) oct.material.emissive.setHex(shape.outerMaterial.emissive);
+      if(shape.outerMaterial.emissiveIntensity !== undefined) oct.material.emissiveIntensity = shape.outerMaterial.emissiveIntensity;
+    }
+    G.add(oct);
+
+    const wire = new THREE.Mesh(outerGeo.clone(), wireMat.clone());
+    if(shape.wireColor !== undefined) wire.material.color.setHex(shape.wireColor);
+    if(shape.wireOpacity !== undefined) wire.material.opacity = shape.wireOpacity;
+    oct.add(wire);
+
+    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(outerGeo), edgeMat.clone());
+    if(shape.edgeColor !== undefined) edges.material.color.setHex(shape.edgeColor);
+    if(shape.edgeOpacity !== undefined) edges.material.opacity = shape.edgeOpacity;
+    oct.add(edges);
+
+    if(shape.stripes){
+      addStripeBands(oct, shape.stripes.outerRadius, shape.stripes);
+    }
+
+    shell = shape.shell ? new THREE.Mesh(makeGeometry(shape.shell), shellMat) : null;
+    if(shell){
+      oct.add(shell);
+    }
+
+    if(shell && shape.stripes && shape.stripes.innerRadius){
+      addStripeBands(shell, shape.stripes.innerRadius, shape.stripes);
+    }
+
+    core = shape.core ? new THREE.Mesh(makeGeometry(shape.core), coreMat) : null;
+    if(core){
+      oct.add(core);
+    }
+  }
 
   // ── STATE ──
   document.addEventListener('mousemove', e => {
@@ -1580,6 +1666,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
   ];
   const themePresets = {
     'coastal-dusk': {
+      shape:{outer:'crystal', shell:'crystal', core:'core-orb'},
       bgRamp:[
         {r:.024, g:.086, b:.112},
         {r:.034, g:.066, b:.128},
@@ -1591,6 +1678,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
       lightHues:{cool:[.59,.11], sea:[.43,.08], warm:[.08,.03], shell:[.56,.09], coreSpec:[.08,.03], emissive:[.53,.03]}
     },
     'blush-gold': {
+      shape:{outer:'gem', shell:'shell-gem', core:'core-orb'},
       bgRamp:[
         {r:.985, g:.965, b:.978},
         {r:.988, g:.942, b:.972},
@@ -1602,6 +1690,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
       lightHues:{cool:[.93,.11], sea:[.97,.08], warm:[.10,.13], shell:[.95,.11], coreSpec:[.08,.12], emissive:[.94,.12]}
     },
     'neon-noir': {
+      shape:{outer:'orb', shell:'shell-orb', core:'core-prism', stripes:{outerRadius:2.9, innerRadius:2.0}},
       bgRamp:[
         {r:.020, g:.020, b:.048},
         {r:.030, g:.018, b:.088},
@@ -1613,6 +1702,30 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
       lightHues:{cool:[.76,.88], sea:[.55,.53], warm:[.93,.88], shell:[.80,.9], coreSpec:[.93,.88], emissive:[.86,.92]}
     },
     'funky-flora': {
+      shape:{
+        outer:'donut',
+        shell:null,
+        core:null,
+        outerMaterial:{
+          color:0x17382a,
+          specular:0xffb6dc,
+          opacity:0.94,
+          shininess:900,
+          emissive:0x0d1f17,
+          emissiveIntensity:0.22
+        },
+        wireColor:0xffd2ea,
+        wireOpacity:0.08,
+        edgeColor:0xff9fd1,
+        edgeOpacity:0.22,
+        stripes:{
+          outerRadius:3.45,
+          color:0xffb6dc,
+          opacity:0.46,
+          thickness:0.11,
+          offsets:[-0.62, -0.2, 0.2, 0.62]
+        }
+      },
       bgRamp:[
         {r:.026, g:.084, b:.060},
         {r:.044, g:.036, b:.098},
@@ -1632,10 +1745,12 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
   }
   if(!themePresets[activeTheme]) activeTheme = 'coastal-dusk';
   document.body.dataset.theme = activeTheme;
+  buildShape((themePresets[activeTheme] || themePresets['coastal-dusk']).shape || {outer:'crystal', shell:'crystal', core:'core-orb'});
   window.__setSiteTheme = theme => {
     if(!themePresets[theme]) return;
     activeTheme = theme;
     document.body.dataset.theme = theme;
+    buildShape((themePresets[theme] || themePresets['coastal-dusk']).shape || {outer:'crystal', shell:'crystal', core:'core-orb'});
     try{ localStorage.setItem('portfolio-theme', theme); }catch(_err){}
   };
 
@@ -1695,10 +1810,14 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
 
     oct.rotation.x = t * .16 * spinM + myN * .18 + sp * Math.PI * 1.15;
     oct.rotation.y = t * .20 * spinM + mxN * .28 + sp * Math.PI * 1.85;
-    core.rotation.x = -t * .18 * spinM;
-    core.rotation.y =  t * .31 * spinM;
-    shell.rotation.x = t * .10 * spinM + .55;
-    shell.rotation.y = -t * .13 * spinM;
+    if(core){
+      core.rotation.x = -t * .18 * spinM;
+      core.rotation.y =  t * .31 * spinM;
+    }
+    if(shell){
+      shell.rotation.x = t * .10 * spinM + .55;
+      shell.rotation.y = -t * .13 * spinM;
+    }
 
     const lt = t * .42;
     lights[0].obj.position.x = Math.sin(lt) * 6.8 + mxN * 2.2;
@@ -1719,11 +1838,15 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     lights[0].obj.color.setHSL(coolHue, lerp(.64, .8, lightShift), lerp(.62, .69, lightShift));
     lights[1].obj.color.setHSL(seaHue, lerp(.44, .72, lightShift), lerp(.58, .66, lightShift));
     lights[2].obj.color.setHSL(warmHue, lerp(.66, .9, lightShift), lerp(.58, .71, lightShift));
-    shell.material.specular.setHSL(lerp(lightHues.shell[0], lightHues.shell[1], lightShift), lerp(.3, .72, lightShift), lerp(.5, .7, lightShift));
-    core.material.specular.setHSL(lerp(lightHues.coreSpec[0], lightHues.coreSpec[1], lightShift), lerp(.62, .9, lightShift), lerp(.56, .74, lightShift));
-    core.material.emissive.setHSL(lerp(lightHues.emissive[0], lightHues.emissive[1], lightShift), lerp(.56, .9, lightShift), lerp(.12, .28, lightShift));
-    core.material.emissiveIntensity = .72 + Math.sin(t * 1.15) * .12 + lightShift * .34;
-    shell.material.opacity = .18 + Math.sin(t * .8 + .6) * .03 + lightShift * .04;
+    if(shell){
+      shell.material.specular.setHSL(lerp(lightHues.shell[0], lightHues.shell[1], lightShift), lerp(.3, .72, lightShift), lerp(.5, .7, lightShift));
+      shell.material.opacity = .18 + Math.sin(t * .8 + .6) * .03 + lightShift * .04;
+    }
+    if(core){
+      core.material.specular.setHSL(lerp(lightHues.coreSpec[0], lightHues.coreSpec[1], lightShift), lerp(.62, .9, lightShift), lerp(.56, .74, lightShift));
+      core.material.emissive.setHSL(lerp(lightHues.emissive[0], lightHues.emissive[1], lightShift), lerp(.56, .9, lightShift), lerp(.12, .28, lightShift));
+      core.material.emissiveIntensity = .72 + Math.sin(t * 1.15) * .12 + lightShift * .34;
+    }
 
     camera.position.z = 9.1 - sp * 1.8 + Math.sin(t * .18) * .12;
     camera.position.x = mxN * .22;
