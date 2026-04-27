@@ -266,6 +266,90 @@ body[data-theme="neon-noir"]{
   --skill-rgb-4:141,125,255;
 }
 
+body[data-theme="funky-flora"]{
+  --bg:#0a1511;
+  --fg:#f8fff7;
+  --muted:rgba(210,255,219,0.56);
+  --gold:#ff5db1;
+  --violet:#ff89cf;
+  --emerald:#7cff72;
+  --ice:#57f7bf;
+  --rose:#ff8fb8;
+  --heading:#ffffff;
+  --copy:rgba(233,255,237,.76);
+  --copy-soft:rgba(210,255,219,.66);
+  --copy-strong:rgba(240,255,242,.84);
+  --mono-soft:rgba(180,245,190,.7);
+  --ghost-text:rgba(233,255,237,.8);
+  --skill-text:rgba(242,255,244,.9);
+  --contact-link-text:rgba(233,255,237,.82);
+  --footer-link:rgba(196,255,205,.5);
+  --stat-label:rgba(188,255,200,.42);
+  --hero-highlight:#7cff72;
+  --about-gpa-text:#7cff72;
+  --about-grad-end:#8af7c3;
+  --button-fill-end:#7cff72;
+  --button-fill-text:#08110d;
+  --bg-glow-1:rgba(124,255,114,.18);
+  --bg-glow-2:rgba(255,93,177,.18);
+  --bg-glow-3:rgba(87,247,191,.13);
+  --bg-grad-top:#07100c;
+  --bg-grad-mid:#0a1511;
+  --bg-grad-bottom:#060d0a;
+  --nav-top-bg:linear-gradient(to bottom,rgba(10,21,17,.68),rgba(10,21,17,0));
+  --nav-scrolled-bg:linear-gradient(180deg,rgba(11,24,18,.94),rgba(10,21,17,.76));
+  --nav-border:rgba(124,255,114,.18);
+  --logo-glow:rgba(255,93,177,.24);
+  --hero-name-grad:linear-gradient(95deg,#ff5db1,#ffd1ea,#7cff72,#57f7bf);
+  --exp-card-top:rgba(14,28,21,.88);
+  --exp-card-bottom:rgba(8,16,12,.96);
+  --proj-card-top:rgba(11,22,17,.97);
+  --proj-card-bottom:rgba(7,14,10,.95);
+  --proj-card-hover-top:rgba(18,35,27,.99);
+  --proj-card-hover-bottom:rgba(10,18,14,.98);
+  --skill-card-top:rgba(14,28,21,.9);
+  --skill-card-bottom:rgba(8,16,12,.94);
+  --skill-card-hover-top:rgba(20,36,28,.96);
+  --skill-card-hover-bottom:rgba(9,17,13,.98);
+  --about-card-top:rgba(255,93,177,.12);
+  --about-card-bottom:rgba(255,255,255,.02);
+  --contact-pill-bg:rgba(12,24,18,.56);
+  --footer-bg:linear-gradient(180deg,rgba(7,16,12,0),rgba(7,16,12,.72));
+  --footer-border:rgba(124,255,114,.12);
+  --footer-copy:rgba(124,255,114,.52);
+  --foot-hover:#57f7bf;
+  --exp-inner-solid:rgba(8,16,12,.96);
+  --exp-inner-soft:rgba(8,16,12,.34);
+  --hero-accent:#ff5db1;
+  --hero-accent-rgb:255,93,177;
+  --exp-accent:#ff89cf;
+  --exp-accent-rgb:255,137,207;
+  --projects-accent:#57f7bf;
+  --projects-accent-rgb:87,247,191;
+  --skills-accent:#7cff72;
+  --skills-accent-rgb:124,255,114;
+  --about-accent:#ff8fb8;
+  --about-accent-rgb:255,143,184;
+  --contact-accent:#7cff72;
+  --contact-accent-rgb:124,255,114;
+  --proj-accent-1:#ff5db1;
+  --proj-rgb-1:255,93,177;
+  --proj-accent-2:#57f7bf;
+  --proj-rgb-2:87,247,191;
+  --proj-accent-3:#7cff72;
+  --proj-rgb-3:124,255,114;
+  --proj-accent-4:#ff89cf;
+  --proj-rgb-4:255,137,207;
+  --skill-accent-1:#57f7bf;
+  --skill-rgb-1:87,247,191;
+  --skill-accent-2:#ff5db1;
+  --skill-rgb-2:255,93,177;
+  --skill-accent-3:#7cff72;
+  --skill-rgb-3:124,255,114;
+  --skill-accent-4:#ff89cf;
+  --skill-rgb-4:255,137,207;
+}
+
 html{font-size:16px;scroll-behavior:smooth}
 body{
   background:var(--bg);
@@ -1061,6 +1145,13 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
       <span class="theme-swatch" style="background:#77d8ff"></span>
     </span>
   </button>
+  <button type="button" class="theme-option" data-theme-choice="funky-flora" aria-label="Funky Flora theme" title="Funky Flora">
+    <span class="theme-swatches" aria-hidden="true">
+      <span class="theme-swatch" style="background:#0a1511"></span>
+      <span class="theme-swatch" style="background:#ff5db1"></span>
+      <span class="theme-swatch" style="background:#7cff72"></span>
+    </span>
+  </button>
 </aside>
 
 <main>
@@ -1520,6 +1611,17 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
         {r:.024, g:.046, b:.098},
       ],
       lightHues:{cool:[.76,.88], sea:[.55,.53], warm:[.93,.88], shell:[.80,.9], coreSpec:[.93,.88], emissive:[.86,.92]}
+    },
+    'funky-flora': {
+      bgRamp:[
+        {r:.026, g:.084, b:.060},
+        {r:.044, g:.036, b:.098},
+        {r:.020, g:.112, b:.078},
+        {r:.066, g:.030, b:.084},
+        {r:.032, g:.090, b:.054},
+        {r:.026, g:.084, b:.060},
+      ],
+      lightHues:{cool:[.43,.48], sea:[.34,.18], warm:[.90,.06], shell:[.38,.22], coreSpec:[.88,.08], emissive:[.33,.18]}
     }
   };
   let activeTheme = 'coastal-dusk';
