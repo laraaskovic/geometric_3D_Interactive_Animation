@@ -1222,6 +1222,13 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
       <span class="theme-swatch" style="background:#d39a62"></span>
     </span>
   </button>
+  <button type="button" class="theme-option" data-theme-choice="neon-noir" aria-label="Neon Noir theme" title="Neon Noir">
+    <span class="theme-swatches" aria-hidden="true">
+      <span class="theme-swatch" style="background:#07070c"></span>
+      <span class="theme-swatch" style="background:#ff4fc4"></span>
+      <span class="theme-swatch" style="background:#77d8ff"></span>
+    </span>
+  </button>
   <button type="button" class="theme-option" data-theme-choice="blush-gold" aria-label="Blush Gold theme" title="Blush Gold">
     <span class="theme-swatches" aria-hidden="true">
       <span class="theme-swatch" style="background:#fff8fb"></span>
@@ -1234,13 +1241,6 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
       <span class="theme-swatch" style="background:#0a1511"></span>
       <span class="theme-swatch" style="background:#ff5db1"></span>
       <span class="theme-swatch" style="background:#7cff72"></span>
-    </span>
-  </button>
-  <button type="button" class="theme-option" data-theme-choice="neon-noir" aria-label="Neon Noir theme" title="Neon Noir">
-    <span class="theme-swatches" aria-hidden="true">
-      <span class="theme-swatch" style="background:#07070c"></span>
-      <span class="theme-swatch" style="background:#ff4fc4"></span>
-      <span class="theme-swatch" style="background:#77d8ff"></span>
     </span>
   </button>
 </aside>
@@ -1662,18 +1662,116 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
 
   function makeHeartGeometry(scale, depth){
     const shape = new THREE.Shape();
-    shape.moveTo(0, -2.6 * scale);
-    shape.bezierCurveTo(-3.2 * scale, -5.0 * scale, -7.2 * scale, -1.4 * scale, -6.6 * scale, 2.3 * scale);
-    shape.bezierCurveTo(-6.0 * scale, 5.4 * scale, -2.6 * scale, 7.2 * scale, 0, 8.6 * scale);
-    shape.bezierCurveTo(2.6 * scale, 7.2 * scale, 6.0 * scale, 5.4 * scale, 6.6 * scale, 2.3 * scale);
-    shape.bezierCurveTo(7.2 * scale, -1.4 * scale, 3.2 * scale, -5.0 * scale, 0, -2.6 * scale);
+    shape.moveTo(0, -6.2 * scale);
+    shape.bezierCurveTo(-4.8 * scale, -10.6 * scale, -11.4 * scale, -6.1 * scale, -10.4 * scale, 0.6 * scale);
+    shape.bezierCurveTo(-9.4 * scale, 5.5 * scale, -4.7 * scale, 8.8 * scale, 0, 12.0 * scale);
+    shape.bezierCurveTo(4.7 * scale, 8.8 * scale, 9.4 * scale, 5.5 * scale, 10.4 * scale, 0.6 * scale);
+    shape.bezierCurveTo(11.4 * scale, -6.1 * scale, 4.8 * scale, -10.6 * scale, 0, -6.2 * scale);
+    const geo = new THREE.ExtrudeGeometry(shape, {
+      depth,
+      bevelEnabled:true,
+      bevelSegments:4,
+      steps:1,
+      bevelSize:0.28 * scale,
+      bevelThickness:depth * 0.16
+    });
+    geo.center();
+    return geo;
+  }
+
+  function makeHeartOutlineGeometry(outerScale, innerScale, depth){
+    const outer = new THREE.Shape();
+    outer.moveTo(0, -6.2 * outerScale);
+    outer.bezierCurveTo(-4.8 * outerScale, -10.6 * outerScale, -11.4 * outerScale, -6.1 * outerScale, -10.4 * outerScale, 0.6 * outerScale);
+    outer.bezierCurveTo(-9.4 * outerScale, 5.5 * outerScale, -4.7 * outerScale, 8.8 * outerScale, 0, 12.0 * outerScale);
+    outer.bezierCurveTo(4.7 * outerScale, 8.8 * outerScale, 9.4 * outerScale, 5.5 * outerScale, 10.4 * outerScale, 0.6 * outerScale);
+    outer.bezierCurveTo(11.4 * outerScale, -6.1 * outerScale, 4.8 * outerScale, -10.6 * outerScale, 0, -6.2 * outerScale);
+
+    const hole = new THREE.Path();
+    hole.moveTo(0, -6.2 * innerScale);
+    hole.bezierCurveTo(-4.8 * innerScale, -10.6 * innerScale, -11.4 * innerScale, -6.1 * innerScale, -10.4 * innerScale, 0.6 * innerScale);
+    hole.bezierCurveTo(-9.4 * innerScale, 5.5 * innerScale, -4.7 * innerScale, 8.8 * innerScale, 0, 12.0 * innerScale);
+    hole.bezierCurveTo(4.7 * innerScale, 8.8 * innerScale, 9.4 * innerScale, 5.5 * innerScale, 10.4 * innerScale, 0.6 * innerScale);
+    hole.bezierCurveTo(11.4 * innerScale, -6.1 * innerScale, 4.8 * innerScale, -10.6 * innerScale, 0, -6.2 * innerScale);
+    outer.holes.push(hole);
+
+    const geo = new THREE.ExtrudeGeometry(outer, {
+      depth,
+      bevelEnabled:true,
+      bevelSegments:3,
+      steps:1,
+      bevelSize:0.18 * outerScale,
+      bevelThickness:depth * 0.14
+    });
+    geo.center();
+    return geo;
+  }
+
+  function makeFlytrapGeometry(scale, depth){
+    const shape = new THREE.Shape();
+    const pts = [
+      [0, -8.8],
+      [-1.2, -6.8],
+      [-2.8, -4.4],
+      [-4.8, -2.3],
+      [-7.0, -0.7],
+      [-9.2, 0.9],
+      [-10.7, 3.2],
+      [-11.4, 6.0],
+      [-10.6, 8.5],
+      [-8.8, 10.0],
+      [-6.6, 10.6],
+      [-4.2, 10.2],
+      [-2.0, 8.8],
+      [-0.7, 6.6],
+      [-0.2, 4.4],
+      [0, 3.2],
+      [0.2, 4.4],
+      [0.7, 6.6],
+      [2.0, 8.8],
+      [4.2, 10.2],
+      [6.6, 10.6],
+      [8.8, 10.0],
+      [10.6, 8.5],
+      [11.4, 6.0],
+      [10.7, 3.2],
+      [9.2, 0.9],
+      [7.0, -0.7],
+      [4.8, -2.3],
+      [2.8, -4.4],
+      [1.2, -6.8],
+    ].map(([x, y]) => new THREE.Vector2(x * scale, y * scale));
+    shape.moveTo(pts[0].x, pts[0].y);
+    for(let i = 1; i < pts.length; i++) shape.lineTo(pts[i].x, pts[i].y);
+    shape.closePath();
+    const geo = new THREE.ExtrudeGeometry(shape, {
+      depth,
+      bevelEnabled:true,
+      bevelSegments:3,
+      steps:1,
+      bevelSize:0.32 * scale,
+      bevelThickness:depth * 0.16
+    });
+    geo.center();
+    return geo;
+  }
+
+  function makeCloverGeometry(scale, depth){
+    const shape = new THREE.Shape();
+    const lobeRadius = 3.2 * scale;
+    shape.absarc(0, 3.0 * scale, lobeRadius, Math.PI * 0.1, Math.PI * 0.9, false);
+    shape.absarc(-3.0 * scale, 0, lobeRadius, Math.PI * 0.6, Math.PI * 1.4, false);
+    shape.absarc(0, -3.0 * scale, lobeRadius, Math.PI * 1.1, Math.PI * 1.9, false);
+    shape.absarc(3.0 * scale, 0, lobeRadius, Math.PI * 1.6, Math.PI * 2.4, false);
+    shape.closePath();
+
     const geo = new THREE.ExtrudeGeometry(shape, {
       depth,
       bevelEnabled:true,
       bevelSegments:3,
       steps:1,
       bevelSize:0.34 * scale,
-      bevelThickness:depth * 0.18
+      bevelThickness:depth * 0.16
     });
     geo.center();
     return geo;
@@ -1692,7 +1790,13 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
       case 'star':
         return makeStarGeometry(3.35, 1.48, 1.05);
       case 'heart':
-        return makeHeartGeometry(0.46, 1.05);
+        return makeHeartGeometry(0.34, 0.82);
+      case 'heart-outline':
+        return makeHeartOutlineGeometry(0.42, 0.28, 0.58);
+      case 'flytrap':
+        return makeFlytrapGeometry(0.33, 0.72);
+      case 'clover':
+        return makeCloverGeometry(0.5, 0.72);
       case 'gem':
         return new THREE.IcosahedronGeometry(3.65, 0);
       case 'orb':
@@ -1849,21 +1953,21 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     },
     'neon-noir': {
       shape:{
-        outer:'heart',
-        shell:'shell-heart',
-        core:'core-prism',
+        outer:'heart-outline',
+        shell:null,
+        core:null,
         outerMaterial:{
-          color:0x0d1020,
-          specular:0x77d8ff,
-          opacity:0.9,
-          shininess:760,
-          emissive:0x160b26,
-          emissiveIntensity:0.18
+          color:0x2a0b20,
+          specular:0xff9be3,
+          opacity:0.94,
+          shininess:820,
+          emissive:0x30061f,
+          emissiveIntensity:0.26
         },
-        wireColor:0xffc6ec,
-        wireOpacity:0.07,
-        edgeColor:0x6fe4ff,
-        edgeOpacity:0.24
+        wireColor:0xffc3ea,
+        wireOpacity:0.1,
+        edgeColor:0xff73d2,
+        edgeOpacity:0.32
       },
       accentLight:{enabled:false},
       bgRamp:[
@@ -1878,21 +1982,21 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     },
     'funky-flora': {
       shape:{
-        outer:'bloom',
+        outer:'clover',
         shell:null,
         core:null,
         outerMaterial:{
-          color:0x123126,
+          color:0x10291f,
           specular:0xffb8de,
           opacity:0.96,
-          shininess:760,
-          emissive:0x11261d,
-          emissiveIntensity:0.28
+          shininess:820,
+          emissive:0x0f2119,
+          emissiveIntensity:0.3
         },
         wireColor:0xffd7eb,
-        wireOpacity:0.06,
-        edgeColor:0xff98cb,
-        edgeOpacity:0.18
+        wireOpacity:0.05,
+        edgeColor:0xff8fc8,
+        edgeOpacity:0.26
       },
       accentLight:{
         enabled:true,
