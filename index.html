@@ -1514,6 +1514,10 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     return Object.assign({obj:pl}, l);
   });
 
+  const accentLight = new THREE.PointLight(0xff9fd1, 0, 24);
+  accentLight.position.set(0, 0, 7);
+  scene.add(accentLight);
+
   // ── MAIN GROUP ──
   const G = new THREE.Group();
   scene.add(G);
@@ -1545,6 +1549,8 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     switch(kind){
       case 'donut':
         return new THREE.TorusGeometry(3.45, 0.82, 42, 128);
+      case 'bloom':
+        return new THREE.TorusKnotGeometry(2.55, 0.68, 220, 28, 2, 3);
       case 'gem':
         return new THREE.IcosahedronGeometry(3.65, 0);
       case 'orb':
@@ -1667,6 +1673,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
   const themePresets = {
     'coastal-dusk': {
       shape:{outer:'crystal', shell:'crystal', core:'core-orb'},
+      accentLight:{enabled:false},
       bgRamp:[
         {r:.024, g:.086, b:.112},
         {r:.034, g:.066, b:.128},
@@ -1679,6 +1686,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     },
     'blush-gold': {
       shape:{outer:'gem', shell:'shell-gem', core:'core-orb'},
+      accentLight:{enabled:false},
       bgRamp:[
         {r:.985, g:.965, b:.978},
         {r:.988, g:.942, b:.972},
@@ -1691,6 +1699,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     },
     'neon-noir': {
       shape:{outer:'orb', shell:'shell-orb', core:'core-prism', stripes:{outerRadius:2.9, innerRadius:2.0}},
+      accentLight:{enabled:false},
       bgRamp:[
         {r:.020, g:.020, b:.048},
         {r:.030, g:.018, b:.088},
@@ -1703,28 +1712,29 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     },
     'funky-flora': {
       shape:{
-        outer:'donut',
+        outer:'bloom',
         shell:null,
         core:null,
         outerMaterial:{
-          color:0x17382a,
-          specular:0xffb6dc,
-          opacity:0.94,
-          shininess:900,
-          emissive:0x0d1f17,
-          emissiveIntensity:0.22
+          color:0x123126,
+          specular:0xffb8de,
+          opacity:0.96,
+          shininess:760,
+          emissive:0x11261d,
+          emissiveIntensity:0.28
         },
-        wireColor:0xffd2ea,
-        wireOpacity:0.08,
-        edgeColor:0xff9fd1,
-        edgeOpacity:0.22,
-        stripes:{
-          outerRadius:3.45,
-          color:0xffb6dc,
-          opacity:0.46,
-          thickness:0.11,
-          offsets:[-0.62, -0.2, 0.2, 0.62]
-        }
+        wireColor:0xffd7eb,
+        wireOpacity:0.06,
+        edgeColor:0xff98cb,
+        edgeOpacity:0.18
+      },
+      accentLight:{
+        enabled:true,
+        colorA:0xff9fd1,
+        colorB:0x7cff72,
+        intensity:2.8,
+        radius:5.4,
+        z:6.6
       },
       bgRamp:[
         {r:.026, g:.084, b:.060},
