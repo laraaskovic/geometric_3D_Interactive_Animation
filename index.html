@@ -959,7 +959,6 @@ section::before{
 .skills-grid{
   display:grid;grid-template-columns:repeat(2,1fr);gap:1.6rem;
   perspective:1200px;
-  transform:translate3d(0,calc((var(--skills-progress) - .5) * -26px),0);
 }
 .skill-block{
   --card-progress:0;
@@ -974,10 +973,10 @@ section::before{
   backdrop-filter:blur(14px);
   position:relative;overflow:hidden;
   transform:
-    translate3d(var(--card-shift-x),var(--card-shift-y),0)
+    translate3d(0,var(--card-shift-y),0)
     rotateX(var(--card-tilt))
     rotateY(var(--card-spin))
-    scale(calc(.86 + var(--card-progress) * .14));
+    scale(calc(.9 + var(--card-progress) * .1));
   opacity:calc(.14 + var(--card-progress) * .86);
   transform-origin:center bottom;
 }
@@ -1009,10 +1008,10 @@ section::before{
 .skill-block:hover{
   border-color:rgba(var(--skill-rgb),.28);
   transform:
-    translate3d(var(--card-shift-x),calc(var(--card-shift-y) - 7px),0)
+    translate3d(0,calc(var(--card-shift-y) - 7px),0)
     rotateX(var(--card-tilt))
     rotateY(var(--card-spin))
-    scale(calc(.88 + var(--card-progress) * .14));
+    scale(calc(.92 + var(--card-progress) * .1));
   box-shadow:0 22px 54px rgba(0,0,0,.22);
   background:linear-gradient(180deg,var(--skill-card-hover-top),var(--skill-card-hover-bottom));
 }
@@ -1069,31 +1068,6 @@ section::before{
 }
 .about-text p{font-size:1.1rem;line-height:2.02;color:var(--copy-soft);margin-bottom:1.55rem;max-width:58ch}
 .about-text .hl-text{color:var(--hero-highlight);font-weight:500}
-
-.about-stats{
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin-top:2.5rem;
-  padding-top:2.5rem;border-top:1px solid rgba(255,255,255,.05);
-}
-.stat-item{
-  padding:1rem 1.1rem;
-  border:1px solid rgba(var(--about-accent-rgb),.12);
-  border-radius:16px;
-  background:linear-gradient(180deg,rgba(var(--about-accent-rgb),.08),rgba(255,255,255,.02));
-  display:flex;align-items:baseline;gap:.7rem;
-  min-width:0;
-}
-.stat-n{
-  font-family:'DM Serif Display',serif;font-size:2.45rem;
-  background:linear-gradient(135deg,var(--accent),var(--about-grad-end));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  display:block;line-height:1;margin-bottom:0;
-  flex-shrink:0;
-}
-.stat-l{
-  font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--stat-label);display:block;
-  line-height:1.55;
-}
 
 .about-card{
   border:1px solid rgba(255,255,255,.07);border-radius:10px;
@@ -1241,9 +1215,6 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
   .proj-grid{grid-template-columns:1fr}
   .skills-grid{grid-template-columns:1fr}
   .about-inner{grid-template-columns:1fr}
-  .about-stats{grid-template-columns:1fr 1fr;gap:1rem}
-  .stat-item{display:block}
-  .stat-n{font-size:3rem;margin-bottom:.35rem}
   .exp-item{grid-template-columns:1fr;gap:1.35rem;padding:2.2rem 0}
   .exp-visual{justify-self:start;width:132px;height:132px}
   .scroll-hint{left:2rem}
@@ -1254,9 +1225,6 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
   .theme-dock{
     top:auto;bottom:1rem;right:1rem;left:auto;transform:none;
   }
-}
-@media(max-width:640px){
-  .about-stats{grid-template-columns:1fr}
 }
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -1554,24 +1522,6 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
         <p>I'm a second-year ECE student at the <span class="hl-text">University of Toronto</span>, ranked in the top 30 out of 460 in my program with a 3.9 GPA - and three Dean's Merit Awards.</p>
         <p>My work spans the full stack from Verilog on silicon to ML training loops, with a particular obsession for <span class="hl-text">low-latency systems, hardware-software co-design, and applied AI</span>.</p>
         <p>I'm currently pursuing a minor in <span class="hl-text">Artificial Intelligence + Robotics</span>, building toward work that matters at the edge of real-world systems.</p>
-      </div>
-      <div class="about-stats r" style="transition-delay:.12s">
-        <div class="stat-item">
-          <span class="stat-n">3.9</span>
-          <span class="stat-l">GPA / 4.0</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-n">Top 30</span>
-          <span class="stat-l">of 460 students</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-n">3×</span>
-          <span class="stat-l">Dean's Merit Award</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-n">3</span>
-          <span class="stat-l">Internships</span>
-        </div>
       </div>
     </div>
 
@@ -2429,12 +2379,10 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
       card.style.setProperty('--card-progress', cardProgress.toFixed(4));
 
       const columnDir = cardIndex % 2 === 0 ? -1 : 1;
-      const rowDir = cardIndex < 2 ? 1 : -1;
-      const shiftX = columnDir * ((1 - cardProgress) * 84 + phase * 18);
-      const shiftY = rowDir * ((1 - cardProgress) * 52 + phase * 24);
-      const tilt = rowDir * ((1 - cardProgress) * 12 + phase * 7);
-      const spin = columnDir * ((1 - cardProgress) * 14 + phase * 10);
-      card.style.setProperty('--card-shift-x', `${shiftX.toFixed(2)}px`);
+      const shiftY = (1 - cardProgress) * 24 + phase * 14;
+      const tilt = phase * 4;
+      const spin = columnDir * phase * 5;
+      card.style.setProperty('--card-shift-x', '0px');
       card.style.setProperty('--card-shift-y', `${shiftY.toFixed(2)}px`);
       card.style.setProperty('--card-tilt', `${tilt.toFixed(2)}deg`);
       card.style.setProperty('--card-spin', `${spin.toFixed(2)}deg`);
