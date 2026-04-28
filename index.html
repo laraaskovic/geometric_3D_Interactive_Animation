@@ -954,11 +954,11 @@ section::before{
   backdrop-filter:blur(14px);
   position:relative;overflow:hidden;
   transform:
-    translate3d(0,calc((1 - var(--card-progress)) * 34px),0)
-    rotateX(calc((1 - var(--card-progress)) * 14deg))
-    rotateY(calc((.5 - var(--card-progress)) * 8deg))
-    scale(calc(.92 + var(--card-progress) * .08));
-  opacity:calc(.36 + var(--card-progress) * .64);
+    translate3d(0,calc((1 - var(--card-progress)) * 56px),0)
+    rotateX(calc((1 - var(--card-progress)) * 18deg))
+    rotateY(calc((.5 - var(--card-progress)) * 12deg))
+    scale(calc(.86 + var(--card-progress) * .14));
+  opacity:calc(.14 + var(--card-progress) * .86);
   transform-origin:center bottom;
 }
 .skill-block:nth-child(1){--skill-accent:var(--skill-accent-1);--skill-rgb:var(--skill-rgb-1)}
@@ -998,8 +998,8 @@ section::before{
   color:var(--skill-accent);margin-bottom:1.2rem;
   display:flex;align-items:center;gap:.45rem;
   position:relative;z-index:1;
-  opacity:calc(.3 + var(--card-progress) * .7);
-  transform:translate3d(0,calc((1 - var(--card-progress)) * 12px),0);
+  opacity:calc(.18 + var(--card-progress) * .82);
+  transform:translate3d(0,calc((1 - var(--card-progress)) * 20px),0);
   transition:opacity .45s ease,transform .45s ease;
 }
 .skill-cat-dot{width:4px;height:4px;border-radius:50%;background:var(--skill-accent);flex-shrink:0}
@@ -1014,10 +1014,10 @@ section::before{
   border:1px solid rgba(var(--skill-rgb),.14);
   background:rgba(var(--skill-rgb),.08);
   transition:border-color .3s ease,transform .3s ease,background .3s ease,color .3s ease,opacity .3s ease;
-  opacity:calc(.16 + var(--chip-progress) * .84);
+  opacity:calc(.08 + var(--chip-progress) * .92);
   transform:
-    translate3d(0,calc((1 - var(--chip-progress)) * 16px),0)
-    scale(calc(.88 + var(--chip-progress) * .12));
+    translate3d(0,calc((1 - var(--chip-progress)) * 26px),0)
+    scale(calc(.8 + var(--chip-progress) * .2));
 }
 .skill-list li::before{content:'✦';color:rgba(var(--skill-rgb),.82);font-size:.72rem;flex-shrink:0}
 .skill-block:hover .skill-list li{
@@ -2360,6 +2360,10 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     return Math.min(Math.max(v, min), max);
   }
 
+  function easeOutCubic(t){
+    return 1 - Math.pow(1 - t, 3);
+  }
+
   function updateSkillsMotion(){
     if(reducedMotion){
       section.style.setProperty('--skills-progress', '1');
@@ -2372,15 +2376,21 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
 
     const rect = section.getBoundingClientRect();
     const vh = window.innerHeight || document.documentElement.clientHeight;
-    const progress = clamp((vh - rect.top) / (vh + rect.height * 0.18), 0, 1);
+    const progress = clamp((vh - rect.top) / (vh + rect.height * 0.05), 0, 1);
     section.style.setProperty('--skills-progress', progress.toFixed(4));
 
+    const cardStarts = [0.04, 0.18, 0.42, 0.56];
+    const cardWindow = 0.18;
+
     cards.forEach((card, cardIndex) => {
-      const cardProgress = clamp((progress - cardIndex * 0.1) / 0.62, 0, 1);
+      const rawCardProgress = clamp((progress - cardStarts[cardIndex]) / cardWindow, 0, 1);
+      const cardProgress = easeOutCubic(rawCardProgress);
       card.style.setProperty('--card-progress', cardProgress.toFixed(4));
 
       [...card.querySelectorAll('.skill-list li')].forEach((chip, chipIndex) => {
-        const chipProgress = clamp((cardProgress - chipIndex * 0.08) / 0.48, 0, 1);
+        const chipStart = 0.52 + chipIndex * 0.09;
+        const rawChipProgress = clamp((cardProgress - chipStart) / 0.22, 0, 1);
+        const chipProgress = easeOutCubic(rawChipProgress);
         chip.style.setProperty('--chip-progress', chipProgress.toFixed(4));
       });
     });
