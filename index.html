@@ -939,16 +939,27 @@ section::before{
 }
 
 /* ── SKILLS ── */
-#skills{padding-top:8rem;padding-bottom:8rem}
+#skills{padding-top:8rem;padding-bottom:8rem;--skills-progress:0}
 
-.skills-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.6rem}
+.skills-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:1.6rem;
+  perspective:1200px;
+}
 .skill-block{
+  --card-progress:0;
   padding:2rem;
   border:1px solid rgba(255,255,255,.06);border-radius:24px;
   background:linear-gradient(180deg,var(--skill-card-top),var(--skill-card-bottom));
-  transition:border-color .4s,transform .4s cubic-bezier(.23,1,.32,1),box-shadow .4s ease,background .4s ease;
+  transition:border-color .4s,transform .4s cubic-bezier(.23,1,.32,1),box-shadow .4s ease,background .4s ease,opacity .35s ease;
   backdrop-filter:blur(14px);
   position:relative;overflow:hidden;
+  transform:
+    translate3d(0,calc((1 - var(--card-progress)) * 34px),0)
+    rotateX(calc((1 - var(--card-progress)) * 14deg))
+    rotateY(calc((.5 - var(--card-progress)) * 8deg))
+    scale(calc(.92 + var(--card-progress) * .08));
+  opacity:calc(.36 + var(--card-progress) * .64);
+  transform-origin:center bottom;
 }
 .skill-block:nth-child(1){--skill-accent:var(--skill-accent-1);--skill-rgb:var(--skill-rgb-1)}
 .skill-block:nth-child(2){--skill-accent:var(--skill-accent-2);--skill-rgb:var(--skill-rgb-2)}
@@ -959,7 +970,21 @@ section::before{
   background:
     radial-gradient(circle at 82% 18%,rgba(var(--skill-rgb),.16),transparent 24%),
     linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));
-  opacity:.9;pointer-events:none;
+  opacity:calc(.3 + var(--card-progress) * .7);pointer-events:none;
+}
+.skill-block::after{
+  content:'';
+  position:absolute;
+  inset:-18% auto -18% -24%;
+  width:58%;
+  background:linear-gradient(90deg,transparent,rgba(var(--skill-rgb),.2),transparent);
+  opacity:calc(var(--card-progress) * .9);
+  transform:
+    translate3d(calc((1 - var(--card-progress)) * -42%),0,0)
+    rotate(12deg);
+  filter:blur(2px);
+  pointer-events:none;
+  transition:opacity .35s ease,transform .45s cubic-bezier(.23,1,.32,1);
 }
 .skill-block:hover{
   border-color:rgba(var(--skill-rgb),.28);
@@ -973,18 +998,26 @@ section::before{
   color:var(--skill-accent);margin-bottom:1.2rem;
   display:flex;align-items:center;gap:.45rem;
   position:relative;z-index:1;
+  opacity:calc(.3 + var(--card-progress) * .7);
+  transform:translate3d(0,calc((1 - var(--card-progress)) * 12px),0);
+  transition:opacity .45s ease,transform .45s ease;
 }
 .skill-cat-dot{width:4px;height:4px;border-radius:50%;background:var(--skill-accent);flex-shrink:0}
 
 .skill-list{list-style:none;display:flex;flex-wrap:wrap;gap:.65rem;position:relative;z-index:1}
 .skill-list li{
+  --chip-progress:0;
   font-size:1rem;color:var(--skill-text);
   display:flex;align-items:center;gap:.5rem;
   padding:.72rem .92rem;
   border-radius:999px;
   border:1px solid rgba(var(--skill-rgb),.14);
   background:rgba(var(--skill-rgb),.08);
-  transition:border-color .3s ease,transform .3s ease,background .3s ease,color .3s ease;
+  transition:border-color .3s ease,transform .3s ease,background .3s ease,color .3s ease,opacity .3s ease;
+  opacity:calc(.16 + var(--chip-progress) * .84);
+  transform:
+    translate3d(0,calc((1 - var(--chip-progress)) * 16px),0)
+    scale(calc(.88 + var(--chip-progress) * .12));
 }
 .skill-list li::before{content:'✦';color:rgba(var(--skill-rgb),.82);font-size:.72rem;flex-shrink:0}
 .skill-block:hover .skill-list li{
@@ -994,6 +1027,17 @@ section::before{
 }
 
 /* ── ABOUT ── */
+@media (prefers-reduced-motion: reduce){
+  .skill-block,
+  .skill-cat,
+  .skill-list li,
+  .skill-block::before,
+  .skill-block::after{
+    transform:none !important;
+    opacity:1 !important;
+  }
+}
+
 #about{padding-top:8rem;padding-bottom:8rem}
 
 .about-inner{
@@ -2302,6 +2346,52 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
 <!-- ══════════════════════════════════════════════════════
      HERO PARALLAX
 ═════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+  const section = document.getElementById('skills');
+  if(!section) return;
+
+  const cards = [...section.querySelectorAll('.skill-block')];
+  if(!cards.length) return;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function clamp(v, min, max){
+    return Math.min(Math.max(v, min), max);
+  }
+
+  function updateSkillsMotion(){
+    if(reducedMotion){
+      section.style.setProperty('--skills-progress', '1');
+      cards.forEach(card => {
+        card.style.setProperty('--card-progress', '1');
+        card.querySelectorAll('.skill-list li').forEach(chip => chip.style.setProperty('--chip-progress', '1'));
+      });
+      return;
+    }
+
+    const rect = section.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const progress = clamp((vh - rect.top) / (vh + rect.height * 0.18), 0, 1);
+    section.style.setProperty('--skills-progress', progress.toFixed(4));
+
+    cards.forEach((card, cardIndex) => {
+      const cardProgress = clamp((progress - cardIndex * 0.1) / 0.62, 0, 1);
+      card.style.setProperty('--card-progress', cardProgress.toFixed(4));
+
+      [...card.querySelectorAll('.skill-list li')].forEach((chip, chipIndex) => {
+        const chipProgress = clamp((cardProgress - chipIndex * 0.08) / 0.48, 0, 1);
+        chip.style.setProperty('--chip-progress', chipProgress.toFixed(4));
+      });
+    });
+  }
+
+  updateSkillsMotion();
+  window.addEventListener('scroll', updateSkillsMotion, {passive:true});
+  window.addEventListener('resize', updateSkillsMotion);
+})();
+</script>
+
 <script>
 (function(){
   const buttons = [...document.querySelectorAll('.theme-option')];
