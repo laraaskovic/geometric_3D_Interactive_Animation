@@ -1190,7 +1190,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
 }
 </style>
 </head>
-<body data-theme="coastal-dusk">
+<body data-theme="funky-flora">
 
 <div id="cDot"></div>
 <div id="cRing"></div>
@@ -1208,6 +1208,13 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
 </nav>
 
 <aside class="theme-dock" aria-label="Color themes">
+  <button type="button" class="theme-option is-active" data-theme-choice="funky-flora" aria-label="Funky Flora theme" title="Funky Flora">
+    <span class="theme-swatches" aria-hidden="true">
+      <span class="theme-swatch" style="background:#0a1511"></span>
+      <span class="theme-swatch" style="background:#ff5db1"></span>
+      <span class="theme-swatch" style="background:#7cff72"></span>
+    </span>
+  </button>
   <button type="button" class="theme-option" data-theme-choice="acid-chaos" aria-label="Acid Chaos theme" title="Acid Chaos">
     <span class="theme-swatches" aria-hidden="true">
       <span class="theme-swatch" style="background:#1a1207"></span>
@@ -1215,7 +1222,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
       <span class="theme-swatch" style="background:#ffd54a"></span>
     </span>
   </button>
-  <button type="button" class="theme-option is-active" data-theme-choice="coastal-dusk" aria-label="Tidal Dusk theme" title="Tidal Dusk">
+  <button type="button" class="theme-option" data-theme-choice="coastal-dusk" aria-label="Tidal Dusk theme" title="Tidal Dusk">
     <span class="theme-swatches" aria-hidden="true">
       <span class="theme-swatch" style="background:#07161d"></span>
       <span class="theme-swatch" style="background:#8cc7d1"></span>
@@ -1234,13 +1241,6 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
       <span class="theme-swatch" style="background:#fff8fb"></span>
       <span class="theme-swatch" style="background:#dea3b8"></span>
       <span class="theme-swatch" style="background:#c79a3b"></span>
-    </span>
-  </button>
-  <button type="button" class="theme-option" data-theme-choice="funky-flora" aria-label="Funky Flora theme" title="Funky Flora">
-    <span class="theme-swatches" aria-hidden="true">
-      <span class="theme-swatch" style="background:#0a1511"></span>
-      <span class="theme-swatch" style="background:#ff5db1"></span>
-      <span class="theme-swatch" style="background:#7cff72"></span>
     </span>
   </button>
 </aside>
@@ -2015,28 +2015,28 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     'funky-flora': {
       shape:{
         outer:'clover-outline',
-        shell:null,
-        core:null,
+        shell:'shell-hyper',
+        core:'core-prism',
         outerMaterial:{
-          color:0x10291f,
-          specular:0xffb8de,
-          opacity:0.96,
-          shininess:820,
-          emissive:0x0f2119,
-          emissiveIntensity:0.3
+          color:0x0d241c,
+          specular:0xffc5e8,
+          opacity:0.95,
+          shininess:900,
+          emissive:0x143528,
+          emissiveIntensity:0.4
         },
-        wireColor:0xffd7eb,
-        wireOpacity:0.05,
-        edgeColor:0xff8fc8,
-        edgeOpacity:0.26
+        wireColor:0xffd9ef,
+        wireOpacity:0.08,
+        edgeColor:0x8fffc7,
+        edgeOpacity:0.34
       },
       accentLight:{
         enabled:true,
         colorA:0xff9fd1,
         colorB:0x7cff72,
-        intensity:2.8,
-        radius:5.4,
-        z:6.6
+        intensity:3.25,
+        radius:6.1,
+        z:7.2
       },
       bgRamp:[
         {r:.026, g:.084, b:.060},
@@ -2046,7 +2046,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
         {r:.032, g:.090, b:.054},
         {r:.026, g:.084, b:.060},
       ],
-      lightHues:{cool:[.43,.48], sea:[.34,.18], warm:[.90,.06], shell:[.38,.22], coreSpec:[.88,.08], emissive:[.33,.18]}
+      lightHues:{cool:[.43,.50], sea:[.34,.19], warm:[.90,.08], shell:[.38,.24], coreSpec:[.86,.12], emissive:[.33,.20]}
     },
     'acid-chaos': {
       shape:{
@@ -2085,20 +2085,20 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
       lightHues:{cool:[.13,.10], sea:[.11,.08], warm:[.07,.04], shell:[.12,.09], coreSpec:[.10,.06], emissive:[.08,.05]}
     }
   };
-  let activeTheme = 'coastal-dusk';
+  let activeTheme = 'funky-flora';
   try{
-    activeTheme = localStorage.getItem('portfolio-theme') || document.body.dataset.theme || 'coastal-dusk';
+    activeTheme = localStorage.getItem('portfolio-theme') || document.body.dataset.theme || 'funky-flora';
   }catch(_err){
-    activeTheme = document.body.dataset.theme || 'coastal-dusk';
+    activeTheme = document.body.dataset.theme || 'funky-flora';
   }
-  if(!themePresets[activeTheme]) activeTheme = 'coastal-dusk';
+  if(!themePresets[activeTheme]) activeTheme = 'funky-flora';
   document.body.dataset.theme = activeTheme;
-  buildShape((themePresets[activeTheme] || themePresets['coastal-dusk']).shape || {outer:'crystal', shell:'crystal', core:'core-orb'});
+  buildShape((themePresets[activeTheme] || themePresets['funky-flora']).shape || {outer:'clover-outline', shell:'shell-hyper', core:'core-prism'});
   window.__setSiteTheme = theme => {
     if(!themePresets[theme]) return;
     activeTheme = theme;
     document.body.dataset.theme = theme;
-    buildShape((themePresets[theme] || themePresets['coastal-dusk']).shape || {outer:'crystal', shell:'crystal', core:'core-orb'});
+    buildShape((themePresets[theme] || themePresets['funky-flora']).shape || {outer:'clover-outline', shell:'shell-hyper', core:'core-prism'});
     try{ localStorage.setItem('portfolio-theme', theme); }catch(_err){}
   };
 
@@ -2129,7 +2129,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     const sp = motion.scroll;
     const mxN = (motion.mouseX / innerWidth - .5) * 2;
     const myN = (motion.mouseY / innerHeight - .5) * 2;
-    const preset = themePresets[activeTheme] || themePresets['coastal-dusk'];
+    const preset = themePresets[activeTheme] || themePresets['funky-flora'];
     const bgRamp = preset.bgRamp;
     const lightHues = preset.lightHues;
     const accentPreset = preset.accentLight || {enabled:false};
@@ -2272,7 +2272,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     buttons.forEach(btn => btn.classList.toggle('is-active', btn.dataset.themeChoice === theme));
   }
 
-  sync(document.body.dataset.theme || 'coastal-dusk');
+  sync(document.body.dataset.theme || 'funky-flora');
 
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
