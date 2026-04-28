@@ -658,6 +658,17 @@ section::before{
     radial-gradient(circle at 15% 84%,rgba(var(--skills-accent-rgb),.12),transparent 28%),
     linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,.006));
 }
+#skills::after{
+  content:'';
+  position:absolute;
+  inset:1.4rem 2.2rem;
+  border-radius:24px;
+  pointer-events:none;
+  background:linear-gradient(115deg,transparent 32%,rgba(var(--skills-accent-rgb),.14) 48%,transparent 64%);
+  opacity:calc(.08 + var(--skills-progress) * .22);
+  transform:translate3d(calc((var(--skills-sweep) * 68%) - 34%),0,0);
+  filter:blur(1px);
+}
 #about::before{
   background:
     radial-gradient(circle at 80% 18%,rgba(var(--about-accent-rgb),.14),transparent 28%),
@@ -939,14 +950,23 @@ section::before{
 }
 
 /* ── SKILLS ── */
-#skills{padding-top:8rem;padding-bottom:8rem;--skills-progress:0}
+#skills{
+  padding-top:8rem;padding-bottom:8rem;
+  --skills-progress:0;
+  --skills-sweep:0;
+}
 
 .skills-grid{
   display:grid;grid-template-columns:repeat(2,1fr);gap:1.6rem;
   perspective:1200px;
+  transform:translate3d(0,calc((var(--skills-progress) - .5) * -26px),0);
 }
 .skill-block{
   --card-progress:0;
+  --card-shift-x:0px;
+  --card-shift-y:0px;
+  --card-tilt:0deg;
+  --card-spin:0deg;
   padding:2rem;
   border:1px solid rgba(255,255,255,.06);border-radius:24px;
   background:linear-gradient(180deg,var(--skill-card-top),var(--skill-card-bottom));
@@ -954,9 +974,9 @@ section::before{
   backdrop-filter:blur(14px);
   position:relative;overflow:hidden;
   transform:
-    translate3d(0,calc((1 - var(--card-progress)) * 56px),0)
-    rotateX(calc((1 - var(--card-progress)) * 18deg))
-    rotateY(calc((.5 - var(--card-progress)) * 12deg))
+    translate3d(var(--card-shift-x),var(--card-shift-y),0)
+    rotateX(var(--card-tilt))
+    rotateY(var(--card-spin))
     scale(calc(.86 + var(--card-progress) * .14));
   opacity:calc(.14 + var(--card-progress) * .86);
   transform-origin:center bottom;
@@ -978,9 +998,9 @@ section::before{
   inset:-18% auto -18% -24%;
   width:58%;
   background:linear-gradient(90deg,transparent,rgba(var(--skill-rgb),.2),transparent);
-  opacity:calc(var(--card-progress) * .9);
+  opacity:calc(.14 + var(--card-progress) * .86);
   transform:
-    translate3d(calc((1 - var(--card-progress)) * -42%),0,0)
+    translate3d(calc((var(--skills-sweep) * 164%) - 88%),0,0)
     rotate(12deg);
   filter:blur(2px);
   pointer-events:none;
@@ -988,7 +1008,11 @@ section::before{
 }
 .skill-block:hover{
   border-color:rgba(var(--skill-rgb),.28);
-  transform:translateY(-7px);
+  transform:
+    translate3d(var(--card-shift-x),calc(var(--card-shift-y) - 7px),0)
+    rotateX(var(--card-tilt))
+    rotateY(var(--card-spin))
+    scale(calc(.88 + var(--card-progress) * .14));
   box-shadow:0 22px 54px rgba(0,0,0,.22);
   background:linear-gradient(180deg,var(--skill-card-hover-top),var(--skill-card-hover-bottom));
 }
@@ -2376,20 +2400,32 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
 
     const rect = section.getBoundingClientRect();
     const vh = window.innerHeight || document.documentElement.clientHeight;
-    const progress = clamp((vh - rect.top) / (vh + rect.height * 0.05), 0, 1);
+    const progress = clamp((vh - rect.top) / (vh + rect.height * 0.04), 0, 1);
     section.style.setProperty('--skills-progress', progress.toFixed(4));
+    section.style.setProperty('--skills-sweep', progress.toFixed(4));
 
-    const cardStarts = [0.04, 0.18, 0.42, 0.56];
-    const cardWindow = 0.18;
+    const cardStarts = [0.02, 0.12, 0.28, 0.38];
+    const cardWindow = 0.34;
 
     cards.forEach((card, cardIndex) => {
       const rawCardProgress = clamp((progress - cardStarts[cardIndex]) / cardWindow, 0, 1);
       const cardProgress = easeOutCubic(rawCardProgress);
       card.style.setProperty('--card-progress', cardProgress.toFixed(4));
 
+      const columnDir = cardIndex % 2 === 0 ? -1 : 1;
+      const rowDir = cardIndex < 2 ? 1 : -1;
+      const shiftX = columnDir * (1 - cardProgress) * 108;
+      const shiftY = rowDir * (1 - cardProgress) * 72 + (progress - 0.5) * 16 * rowDir;
+      const tilt = (1 - cardProgress) * rowDir * 16 + (progress - 0.5) * 8 * rowDir;
+      const spin = (1 - cardProgress) * columnDir * 18 + (progress - 0.5) * 14 * columnDir;
+      card.style.setProperty('--card-shift-x', `${shiftX.toFixed(2)}px`);
+      card.style.setProperty('--card-shift-y', `${shiftY.toFixed(2)}px`);
+      card.style.setProperty('--card-tilt', `${tilt.toFixed(2)}deg`);
+      card.style.setProperty('--card-spin', `${spin.toFixed(2)}deg`);
+
       [...card.querySelectorAll('.skill-list li')].forEach((chip, chipIndex) => {
-        const chipStart = 0.52 + chipIndex * 0.09;
-        const rawChipProgress = clamp((cardProgress - chipStart) / 0.22, 0, 1);
+        const chipStart = 0.18 + chipIndex * 0.12;
+        const rawChipProgress = clamp((cardProgress - chipStart) / 0.28, 0, 1);
         const chipProgress = easeOutCubic(rawChipProgress);
         chip.style.setProperty('--chip-progress', chipProgress.toFixed(4));
       });
