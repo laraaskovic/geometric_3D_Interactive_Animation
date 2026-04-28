@@ -1118,6 +1118,29 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
   box-shadow:var(--shadow);
   display:flex;flex-direction:column;gap:.5rem;
 }
+.theme-scroll-toggle{
+  width:40px;height:40px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+  color:var(--heading);
+  border-radius:999px;
+  padding:0;
+  display:grid;place-items:center;
+  cursor:pointer;
+  transition:border-color .25s ease,background .25s ease,color .25s ease,box-shadow .25s ease,transform .25s ease;
+  font-family:var(--mono);
+  font-size:.72rem;
+  letter-spacing:.04em;
+}
+.theme-scroll-toggle:hover{
+  transform:scale(1.06);
+  border-color:rgba(var(--hero-accent-rgb),.24);
+}
+.theme-scroll-toggle.is-active{
+  border-color:rgba(var(--hero-accent-rgb),.34);
+  background:rgba(var(--hero-accent-rgb),.14);
+  box-shadow:0 14px 32px rgba(var(--hero-accent-rgb),.14);
+}
 .theme-option{
   width:40px;height:40px;
   border:1px solid rgba(255,255,255,.08);
@@ -1145,6 +1168,54 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
   width:10px;height:10px;border-radius:999px;
   border:1px solid rgba(255,255,255,.16);
   flex-shrink:0;
+}
+
+body::before,
+nav,
+.logo,
+.nav-links a,
+.hero-name,
+.hero-bio,
+.hl-fill,
+.hl-ghost,
+section::before,
+.sec-title,
+.exp-item,
+.exp-item::before,
+.exp-date,
+.exp-visual,
+.exp-visual::before,
+.exp-visual-donut .exp-ornament,
+.exp-visual-frame .exp-ornament,
+.exp-visual-frame .exp-ornament::before,
+.exp-visual-frame .exp-ornament::after,
+.exp-visual-split .exp-ornament,
+.exp-visual-diamond .exp-ornament,
+.exp-visual-diamond .exp-ornament::after,
+.proj,
+.proj::before,
+.proj::after,
+.proj-title,
+.proj-desc,
+.chip,
+.proj-arrow,
+.skill-block,
+.skill-block::before,
+.skill-list li,
+.about-text p,
+.about-card,
+.about-card::before,
+.stat-item,
+.stat-n,
+.about-detail,
+.about-gpa,
+.contact-email,
+.c-link,
+footer,
+.foot-links a{
+  transition-property:background,background-color,color,border-color,box-shadow,text-shadow,opacity,filter;
+  transition-duration:.55s;
+  transition-timing-function:ease;
 }
 
 /* ── SCROLL REVEAL ── */
@@ -1208,13 +1279,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
 </nav>
 
 <aside class="theme-dock" aria-label="Color themes">
-  <button type="button" class="theme-option" data-theme-choice="acid-chaos" aria-label="Acid Chaos theme" title="Acid Chaos">
-    <span class="theme-swatches" aria-hidden="true">
-      <span class="theme-swatch" style="background:#1a1207"></span>
-      <span class="theme-swatch" style="background:#ff8a2f"></span>
-      <span class="theme-swatch" style="background:#ffd54a"></span>
-    </span>
-  </button>
+  <button type="button" class="theme-scroll-toggle" aria-pressed="false" title="Scroll Blend">SC</button>
   <button type="button" class="theme-option is-active" data-theme-choice="coastal-dusk" aria-label="Tidal Dusk theme" title="Tidal Dusk">
     <span class="theme-swatches" aria-hidden="true">
       <span class="theme-swatch" style="background:#07161d"></span>
@@ -1234,13 +1299,6 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
       <span class="theme-swatch" style="background:#fff8fb"></span>
       <span class="theme-swatch" style="background:#dea3b8"></span>
       <span class="theme-swatch" style="background:#c79a3b"></span>
-    </span>
-  </button>
-  <button type="button" class="theme-option" data-theme-choice="funky-flora" aria-label="Funky Flora theme" title="Funky Flora">
-    <span class="theme-swatches" aria-hidden="true">
-      <span class="theme-swatch" style="background:#0a1511"></span>
-      <span class="theme-swatch" style="background:#ff5db1"></span>
-      <span class="theme-swatch" style="background:#7cff72"></span>
     </span>
   </button>
 </aside>
@@ -2103,6 +2161,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     const accentPreset = preset.accentLight || {enabled:false};
 
     root.style.setProperty('--scroll-p', sp.toFixed(4));
+    if(window.__updateThemeFromScroll) window.__updateThemeFromScroll(sp);
     document.body.classList.toggle('scrolled', sp > .03);
 
     const si = Math.min(sp * (bgRamp.length - 1), bgRamp.length - 2);
@@ -2234,22 +2293,78 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
 <script>
 (function(){
   const buttons = [...document.querySelectorAll('.theme-option')];
+  const scrollToggle = document.querySelector('.theme-scroll-toggle');
   if(!buttons.length) return;
+  const scrollThemes = ['coastal-dusk','blush-gold','neon-noir'];
+  let manualTheme = document.body.dataset.theme || 'coastal-dusk';
+  let scrollMode = false;
+  try{
+    scrollMode = localStorage.getItem('portfolio-scroll-theme') === '1';
+  }catch(_err){
+    scrollMode = false;
+  }
 
   function sync(theme){
     buttons.forEach(btn => btn.classList.toggle('is-active', btn.dataset.themeChoice === theme));
   }
 
+  function syncToggle(){
+    if(!scrollToggle) return;
+    scrollToggle.classList.toggle('is-active', scrollMode);
+    scrollToggle.setAttribute('aria-pressed', scrollMode ? 'true' : 'false');
+    scrollToggle.title = scrollMode ? 'Scroll Blend On' : 'Scroll Blend Off';
+  }
+
+  function applyTheme(theme){
+    if(window.__setSiteTheme) window.__setSiteTheme(theme);
+    else document.body.dataset.theme = theme;
+    sync(theme);
+  }
+
+  function currentScrollProgress(){
+    const max = Math.max(document.body.scrollHeight - innerHeight, 1);
+    const shared = window.__siteMotion;
+    return shared ? shared.scroll : Math.min(window.scrollY / max, 1);
+  }
+
+  function themeFromScroll(progress){
+    const p = Math.min(Math.max(progress, 0), .999999);
+    const index = Math.min(scrollThemes.length - 1, Math.floor(p * scrollThemes.length));
+    return scrollThemes[index];
+  }
+
+  window.__updateThemeFromScroll = progress => {
+    if(!scrollMode) return;
+    const theme = themeFromScroll(progress);
+    if(document.body.dataset.theme !== theme) applyTheme(theme);
+  };
+
   sync(document.body.dataset.theme || 'coastal-dusk');
+  syncToggle();
+  if(scrollMode) window.__updateThemeFromScroll(currentScrollProgress());
 
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
       const theme = btn.dataset.themeChoice;
-      if(window.__setSiteTheme) window.__setSiteTheme(theme);
-      else document.body.dataset.theme = theme;
-      sync(theme);
+      manualTheme = theme;
+      if(scrollMode){
+        scrollMode = false;
+        try{ localStorage.setItem('portfolio-scroll-theme', '0'); }catch(_err){}
+        syncToggle();
+      }
+      applyTheme(theme);
     });
   });
+
+  if(scrollToggle){
+    scrollToggle.addEventListener('click', () => {
+      scrollMode = !scrollMode;
+      try{ localStorage.setItem('portfolio-scroll-theme', scrollMode ? '1' : '0'); }catch(_err){}
+      syncToggle();
+      if(scrollMode) window.__updateThemeFromScroll(currentScrollProgress());
+      else applyTheme(manualTheme);
+    });
+  }
 })();
 </script>
 
