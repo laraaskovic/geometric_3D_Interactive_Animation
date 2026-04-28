@@ -2055,7 +2055,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
       shape:{
         outer:'flower-outline',
         shell:null,
-        core:'core-orb',
+        core:null,
         outerMaterial:{
           color:0x10261d,
           specular:0xffc4e7,
@@ -2132,12 +2132,12 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
   }
   if(!themePresets[activeTheme]) activeTheme = 'funky-flora';
   document.body.dataset.theme = activeTheme;
-  buildShape((themePresets[activeTheme] || themePresets['funky-flora']).shape || {outer:'flower-outline', shell:null, core:'core-orb'});
+  buildShape((themePresets[activeTheme] || themePresets['funky-flora']).shape || {outer:'flower-outline', shell:null, core:null});
   window.__setSiteTheme = theme => {
     if(!themePresets[theme]) return;
     activeTheme = theme;
     document.body.dataset.theme = theme;
-    buildShape((themePresets[theme] || themePresets['funky-flora']).shape || {outer:'flower-outline', shell:null, core:'core-orb'});
+    buildShape((themePresets[theme] || themePresets['funky-flora']).shape || {outer:'flower-outline', shell:null, core:null});
     try{ localStorage.setItem('portfolio-theme', theme); }catch(_err){}
   };
 
