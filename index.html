@@ -2014,29 +2014,29 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     },
     'funky-flora': {
       shape:{
-        outer:'clover-outline',
-        shell:'shell-hyper',
-        core:'core-prism',
+        outer:'heart-outline',
+        shell:'shell-star',
+        core:'core-orb',
         outerMaterial:{
-          color:0x0d241c,
-          specular:0xffc5e8,
-          opacity:0.95,
-          shininess:900,
-          emissive:0x143528,
-          emissiveIntensity:0.4
+          color:0x10231b,
+          specular:0xffc0ea,
+          opacity:0.94,
+          shininess:980,
+          emissive:0x173629,
+          emissiveIntensity:0.42
         },
-        wireColor:0xffd9ef,
-        wireOpacity:0.08,
-        edgeColor:0x8fffc7,
-        edgeOpacity:0.34
+        wireColor:0xffe3f4,
+        wireOpacity:0.1,
+        edgeColor:0x87ffbe,
+        edgeOpacity:0.38
       },
       accentLight:{
         enabled:true,
         colorA:0xff9fd1,
         colorB:0x7cff72,
-        intensity:3.25,
-        radius:6.1,
-        z:7.2
+        intensity:3.45,
+        radius:6.3,
+        z:7.4
       },
       bgRamp:[
         {r:.026, g:.084, b:.060},
@@ -2046,7 +2046,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
         {r:.032, g:.090, b:.054},
         {r:.026, g:.084, b:.060},
       ],
-      lightHues:{cool:[.43,.50], sea:[.34,.19], warm:[.90,.08], shell:[.38,.24], coreSpec:[.86,.12], emissive:[.33,.20]}
+      lightHues:{cool:[.43,.53], sea:[.34,.21], warm:[.90,.10], shell:[.36,.28], coreSpec:[.85,.15], emissive:[.32,.24]}
     },
     'acid-chaos': {
       shape:{
@@ -2093,12 +2093,12 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
   }
   if(!themePresets[activeTheme]) activeTheme = 'funky-flora';
   document.body.dataset.theme = activeTheme;
-  buildShape((themePresets[activeTheme] || themePresets['funky-flora']).shape || {outer:'clover-outline', shell:'shell-hyper', core:'core-prism'});
+  buildShape((themePresets[activeTheme] || themePresets['funky-flora']).shape || {outer:'heart-outline', shell:'shell-star', core:'core-orb'});
   window.__setSiteTheme = theme => {
     if(!themePresets[theme]) return;
     activeTheme = theme;
     document.body.dataset.theme = theme;
-    buildShape((themePresets[theme] || themePresets['funky-flora']).shape || {outer:'clover-outline', shell:'shell-hyper', core:'core-prism'});
+    buildShape((themePresets[theme] || themePresets['funky-flora']).shape || {outer:'heart-outline', shell:'shell-star', core:'core-orb'});
     try{ localStorage.setItem('portfolio-theme', theme); }catch(_err){}
   };
 
