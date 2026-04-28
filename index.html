@@ -1071,24 +1071,28 @@ section::before{
 .about-text .hl-text{color:var(--hero-highlight);font-weight:500}
 
 .about-stats{
-  display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2.5rem;
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin-top:2.5rem;
   padding-top:2.5rem;border-top:1px solid rgba(255,255,255,.05);
 }
 .stat-item{
-  padding:1.2rem 1.1rem 1rem;
+  padding:1rem 1.1rem;
   border:1px solid rgba(var(--about-accent-rgb),.12);
   border-radius:16px;
   background:linear-gradient(180deg,rgba(var(--about-accent-rgb),.08),rgba(255,255,255,.02));
+  display:flex;align-items:baseline;gap:.7rem;
+  min-width:0;
 }
 .stat-n{
-  font-family:'DM Serif Display',serif;font-size:3.45rem;
+  font-family:'DM Serif Display',serif;font-size:2.45rem;
   background:linear-gradient(135deg,var(--accent),var(--about-grad-end));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  display:block;line-height:1;margin-bottom:.4rem;
+  display:block;line-height:1;margin-bottom:0;
+  flex-shrink:0;
 }
 .stat-l{
   font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
   color:var(--stat-label);display:block;
+  line-height:1.55;
 }
 
 .about-card{
@@ -1237,6 +1241,9 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
   .proj-grid{grid-template-columns:1fr}
   .skills-grid{grid-template-columns:1fr}
   .about-inner{grid-template-columns:1fr}
+  .about-stats{grid-template-columns:1fr 1fr;gap:1rem}
+  .stat-item{display:block}
+  .stat-n{font-size:3rem;margin-bottom:.35rem}
   .exp-item{grid-template-columns:1fr;gap:1.35rem;padding:2.2rem 0}
   .exp-visual{justify-self:start;width:132px;height:132px}
   .scroll-hint{left:2rem}
@@ -1247,6 +1254,9 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
   .theme-dock{
     top:auto;bottom:1rem;right:1rem;left:auto;transform:none;
   }
+}
+@media(max-width:640px){
+  .about-stats{grid-template-columns:1fr}
 }
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -2391,8 +2401,13 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
   function updateSkillsMotion(){
     if(reducedMotion){
       section.style.setProperty('--skills-progress', '1');
+      section.style.setProperty('--skills-sweep', '.5');
       cards.forEach(card => {
         card.style.setProperty('--card-progress', '1');
+        card.style.setProperty('--card-shift-x', '0px');
+        card.style.setProperty('--card-shift-y', '0px');
+        card.style.setProperty('--card-tilt', '0deg');
+        card.style.setProperty('--card-spin', '0deg');
         card.querySelectorAll('.skill-list li').forEach(chip => chip.style.setProperty('--chip-progress', '1'));
       });
       return;
@@ -2400,12 +2415,13 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
 
     const rect = section.getBoundingClientRect();
     const vh = window.innerHeight || document.documentElement.clientHeight;
-    const progress = clamp((vh - rect.top) / (vh + rect.height * 0.04), 0, 1);
+    const progress = clamp((vh * 1.16 - rect.top) / (vh + rect.height * 0.24), 0, 1);
+    const phase = progress * 2 - 1;
     section.style.setProperty('--skills-progress', progress.toFixed(4));
     section.style.setProperty('--skills-sweep', progress.toFixed(4));
 
-    const cardStarts = [0.02, 0.12, 0.28, 0.38];
-    const cardWindow = 0.34;
+    const cardStarts = [0.0, 0.08, 0.16, 0.24];
+    const cardWindow = 0.48;
 
     cards.forEach((card, cardIndex) => {
       const rawCardProgress = clamp((progress - cardStarts[cardIndex]) / cardWindow, 0, 1);
@@ -2414,18 +2430,18 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
 
       const columnDir = cardIndex % 2 === 0 ? -1 : 1;
       const rowDir = cardIndex < 2 ? 1 : -1;
-      const shiftX = columnDir * (1 - cardProgress) * 108;
-      const shiftY = rowDir * (1 - cardProgress) * 72 + (progress - 0.5) * 16 * rowDir;
-      const tilt = (1 - cardProgress) * rowDir * 16 + (progress - 0.5) * 8 * rowDir;
-      const spin = (1 - cardProgress) * columnDir * 18 + (progress - 0.5) * 14 * columnDir;
+      const shiftX = columnDir * ((1 - cardProgress) * 84 + phase * 18);
+      const shiftY = rowDir * ((1 - cardProgress) * 52 + phase * 24);
+      const tilt = rowDir * ((1 - cardProgress) * 12 + phase * 7);
+      const spin = columnDir * ((1 - cardProgress) * 14 + phase * 10);
       card.style.setProperty('--card-shift-x', `${shiftX.toFixed(2)}px`);
       card.style.setProperty('--card-shift-y', `${shiftY.toFixed(2)}px`);
       card.style.setProperty('--card-tilt', `${tilt.toFixed(2)}deg`);
       card.style.setProperty('--card-spin', `${spin.toFixed(2)}deg`);
 
       [...card.querySelectorAll('.skill-list li')].forEach((chip, chipIndex) => {
-        const chipStart = 0.18 + chipIndex * 0.12;
-        const rawChipProgress = clamp((cardProgress - chipStart) / 0.28, 0, 1);
+        const chipStart = 0.06 + chipIndex * 0.1;
+        const rawChipProgress = clamp((cardProgress - chipStart) / 0.34, 0, 1);
         const chipProgress = easeOutCubic(rawChipProgress);
         chip.style.setProperty('--chip-progress', chipProgress.toFixed(4));
       });
