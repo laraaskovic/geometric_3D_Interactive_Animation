@@ -1807,6 +1807,43 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     return geo;
   }
 
+  function makeFlowerOutlineGeometry(outerScale, innerScale, depth){
+    function makeFlowerPath(scale){
+      const path = [];
+      const samples = 180;
+      for(let i = 0; i <= samples; i++){
+        const a = (i / samples) * Math.PI * 2 - Math.PI / 2;
+        const radius = (6.1 + Math.cos(a * 5) * 1.85) * scale;
+        path.push(new THREE.Vector2(Math.cos(a) * radius, Math.sin(a) * radius));
+      }
+      return path;
+    }
+
+    const outer = new THREE.Shape();
+    const outerPts = makeFlowerPath(outerScale);
+    outer.moveTo(outerPts[0].x, outerPts[0].y);
+    for(let i = 1; i < outerPts.length; i++) outer.lineTo(outerPts[i].x, outerPts[i].y);
+    outer.closePath();
+
+    const hole = new THREE.Path();
+    const innerPts = makeFlowerPath(innerScale);
+    hole.moveTo(innerPts[0].x, innerPts[0].y);
+    for(let i = 1; i < innerPts.length; i++) hole.lineTo(innerPts[i].x, innerPts[i].y);
+    hole.closePath();
+    outer.holes.push(hole);
+
+    const geo = new THREE.ExtrudeGeometry(outer, {
+      depth,
+      bevelEnabled:true,
+      bevelSegments:3,
+      steps:1,
+      bevelSize:0.14 * outerScale,
+      bevelThickness:depth * 0.14
+    });
+    geo.center();
+    return geo;
+  }
+
   function makeGeometry(kind){
     switch(kind){
       case 'donut':
@@ -1829,6 +1866,8 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
         return makeCloverGeometry(0.5, 0.72);
       case 'clover-outline':
         return makeCloverOutlineGeometry(0.5, 0.31, 0.62);
+      case 'flower-outline':
+        return makeFlowerOutlineGeometry(0.5, 0.29, 0.62);
       case 'gem':
         return new THREE.IcosahedronGeometry(3.65, 0);
       case 'orb':
@@ -2014,28 +2053,28 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     },
     'funky-flora': {
       shape:{
-        outer:'heart-outline',
-        shell:'shell-star',
+        outer:'flower-outline',
+        shell:null,
         core:'core-orb',
         outerMaterial:{
-          color:0x10231b,
-          specular:0xffc0ea,
+          color:0x10261d,
+          specular:0xffc4e7,
           opacity:0.94,
-          shininess:980,
-          emissive:0x173629,
-          emissiveIntensity:0.42
+          shininess:940,
+          emissive:0x173628,
+          emissiveIntensity:0.44
         },
-        wireColor:0xffe3f4,
-        wireOpacity:0.1,
-        edgeColor:0x87ffbe,
-        edgeOpacity:0.38
+        wireColor:0xffe1f2,
+        wireOpacity:0.08,
+        edgeColor:0x92ffc7,
+        edgeOpacity:0.34
       },
       accentLight:{
         enabled:true,
         colorA:0xff9fd1,
         colorB:0x7cff72,
-        intensity:3.45,
-        radius:6.3,
+        intensity:3.3,
+        radius:6.0,
         z:7.4
       },
       bgRamp:[
@@ -2046,7 +2085,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
         {r:.032, g:.090, b:.054},
         {r:.026, g:.084, b:.060},
       ],
-      lightHues:{cool:[.43,.53], sea:[.34,.21], warm:[.90,.10], shell:[.36,.28], coreSpec:[.85,.15], emissive:[.32,.24]}
+      lightHues:{cool:[.43,.50], sea:[.34,.20], warm:[.90,.09], shell:[.36,.24], coreSpec:[.85,.14], emissive:[.32,.22]}
     },
     'acid-chaos': {
       shape:{
@@ -2093,12 +2132,12 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
   }
   if(!themePresets[activeTheme]) activeTheme = 'funky-flora';
   document.body.dataset.theme = activeTheme;
-  buildShape((themePresets[activeTheme] || themePresets['funky-flora']).shape || {outer:'heart-outline', shell:'shell-star', core:'core-orb'});
+  buildShape((themePresets[activeTheme] || themePresets['funky-flora']).shape || {outer:'flower-outline', shell:null, core:'core-orb'});
   window.__setSiteTheme = theme => {
     if(!themePresets[theme]) return;
     activeTheme = theme;
     document.body.dataset.theme = theme;
-    buildShape((themePresets[theme] || themePresets['funky-flora']).shape || {outer:'heart-outline', shell:'shell-star', core:'core-orb'});
+    buildShape((themePresets[theme] || themePresets['funky-flora']).shape || {outer:'flower-outline', shell:null, core:'core-orb'});
     try{ localStorage.setItem('portfolio-theme', theme); }catch(_err){}
   };
 
