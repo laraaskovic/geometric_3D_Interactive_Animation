@@ -1777,6 +1777,36 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     return geo;
   }
 
+  function makeCloverOutlineGeometry(outerScale, innerScale, depth){
+    const outer = new THREE.Shape();
+    const outerRadius = 3.2 * outerScale;
+    outer.absarc(0, 3.0 * outerScale, outerRadius, Math.PI * 0.1, Math.PI * 0.9, false);
+    outer.absarc(-3.0 * outerScale, 0, outerRadius, Math.PI * 0.6, Math.PI * 1.4, false);
+    outer.absarc(0, -3.0 * outerScale, outerRadius, Math.PI * 1.1, Math.PI * 1.9, false);
+    outer.absarc(3.0 * outerScale, 0, outerRadius, Math.PI * 1.6, Math.PI * 2.4, false);
+    outer.closePath();
+
+    const hole = new THREE.Path();
+    const innerRadius = 3.2 * innerScale;
+    hole.absarc(0, 3.0 * innerScale, innerRadius, Math.PI * 0.1, Math.PI * 0.9, false);
+    hole.absarc(-3.0 * innerScale, 0, innerRadius, Math.PI * 0.6, Math.PI * 1.4, false);
+    hole.absarc(0, -3.0 * innerScale, innerRadius, Math.PI * 1.1, Math.PI * 1.9, false);
+    hole.absarc(3.0 * innerScale, 0, innerRadius, Math.PI * 1.6, Math.PI * 2.4, false);
+    hole.closePath();
+    outer.holes.push(hole);
+
+    const geo = new THREE.ExtrudeGeometry(outer, {
+      depth,
+      bevelEnabled:true,
+      bevelSegments:3,
+      steps:1,
+      bevelSize:0.18 * outerScale,
+      bevelThickness:depth * 0.14
+    });
+    geo.center();
+    return geo;
+  }
+
   function makeGeometry(kind){
     switch(kind){
       case 'donut':
@@ -1797,6 +1827,8 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
         return makeFlytrapGeometry(0.33, 0.72);
       case 'clover':
         return makeCloverGeometry(0.5, 0.72);
+      case 'clover-outline':
+        return makeCloverOutlineGeometry(0.5, 0.31, 0.62);
       case 'gem':
         return new THREE.IcosahedronGeometry(3.65, 0);
       case 'orb':
@@ -1982,7 +2014,7 @@ footer p{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;color:var
     },
     'funky-flora': {
       shape:{
-        outer:'clover',
+        outer:'clover-outline',
         shell:null,
         core:null,
         outerMaterial:{
