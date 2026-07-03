@@ -4,7 +4,8 @@ on:
   schedule:
     - cron: '30 23 * * *'   # once a day, UTC — adjust to your timezone
   workflow_dispatch:
-
+permissions:
+  contents: write
 jobs:
   log:
     runs-on: ubuntu-latest
