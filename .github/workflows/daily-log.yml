@@ -1,0 +1,24 @@
+name: Daily Log
+
+on:
+  schedule:
+    - cron: '30 23 * * *'   # once a day, UTC — adjust to your timezone
+  workflow_dispatch:
+
+jobs:
+  log:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Append daily entry
+        run: |
+          echo "$(date -u '+%Y-%m-%d'): Currently interning at Arches — daily work committed in company repos, logged here." >> daily-log.md
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add daily-log.md
+          git commit -m "Daily log: $(date -u '+%Y-%m-%d') — interning at Arches" || echo "Nothing to commit"
+          git push
