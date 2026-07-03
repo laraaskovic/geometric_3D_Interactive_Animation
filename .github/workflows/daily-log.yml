@@ -2,7 +2,7 @@ name: Daily Log
 
 on:
   schedule:
-    - cron: '30 23 * * *'   # once a day, UTC — adjust to your timezone
+    - cron: '0 11 * * *'
   workflow_dispatch:
 permissions:
   contents: write
