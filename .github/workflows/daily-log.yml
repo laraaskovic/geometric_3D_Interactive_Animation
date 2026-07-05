@@ -2,7 +2,7 @@ name: Daily Log
 
 on:
   schedule:
-    - cron: '10 13 * * *'
+    - cron: '14 17 * * *'
   workflow_dispatch:
 permissions:
   contents: write
